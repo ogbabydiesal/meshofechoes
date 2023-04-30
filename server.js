@@ -16,11 +16,10 @@ const io = socketIO(server);
 
 io.on('connection', (socket) => {
   console.log('Client connected');
-  socket.on("hello", (arg) => {
-    console.log(arg); // world
+  socket.on("controller", (arg) => {
+    console.log(arg); //gust
     io.emit('response', arg);
   });
   socket.on('disconnect', () => console.log('Client disconnected'));
 });
 
-setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
