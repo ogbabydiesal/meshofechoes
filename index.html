@@ -9,10 +9,21 @@
         el = document.getElementById('server-time');
         el.innerHTML = 'Server time: ' + timeString;
       });
+
+      socket.on('response', (haha) => {
+        el = document.getElementById('server-time');
+        el.innerHTML = 'Server time: ' + haha;
+      });
+      
+      function gust(){
+        socket.emit("hello", "world");
+        //console.log('haha');
+      }
+
     </script>
   </head>
   <body>
     <p id="server-time"></p>
-    <button>a gust of wind</button>
+    <button onclick="gust()">a gust of wind</button>
   </body>
 </html>

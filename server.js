@@ -1,5 +1,7 @@
 'use strict';
 
+
+
 const express = require('express');
 const socketIO = require('socket.io');
 
@@ -14,6 +16,10 @@ const io = socketIO(server);
 
 io.on('connection', (socket) => {
   console.log('Client connected');
+  socket.on("hello", (arg) => {
+    console.log(arg); // world
+    io.emit('response', arg);
+  });
   socket.on('disconnect', () => console.log('Client disconnected'));
 });
 

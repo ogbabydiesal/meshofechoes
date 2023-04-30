@@ -1,30 +1,58 @@
 {
 
   "name": "chime-server",
+
   "version": "1.0.0",
+
   "description": "communication between web app and 3D unity application",
+
   "main": "index.js",
+
   "engines": {
+
     "node": "18.7.x"
+
   },
-  
+
   "scripts": {
+
     "test": "echo \"Error: no test specified\" && exit 1",
+
     "start": "node server.js"
+
   },
+
   "repository": {
+
     "type": "git",
+
     "url": "git+https://github.com/tmartinez88/chime-server.git"
+
   },
+
   "keywords": [],
+
   "author": "",
+
   "license": "ISC",
+
   "bugs": {
+
     "url": "https://github.com/tmartinez88/chime-server/issues"
+
   },
+
   "homepage": "https://github.com/tmartinez88/chime-server#readme",
+
   "dependencies": {
+
     "express": "^4.18.2",
+
+    "node-osc": "^8.0.11",
+
     "socket.io": "^4.6.1"
+
   }
+
 }
+
