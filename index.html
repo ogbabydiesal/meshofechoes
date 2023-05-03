@@ -74,7 +74,8 @@
         buttonEl.innerHTML = windText[getRandomInt(windText.length)];
         videoEl.src =  vFiles[getRandomInt(vFiles.length)];
         videoEl.load();
-        videoEl.play();    
+        videoEl.play(); 
+        videoEl.muted = false;   
       }
 
       function gust(){
@@ -85,6 +86,7 @@
         videoEl = document.getElementById('lumi');
         videoEl.pause();
         videoEl.src=null;
+        
         //socket.emit("stop", "now");
       }
 
