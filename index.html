@@ -6,7 +6,7 @@
             margin:0;
             padding:0;
             margin-top:25px;
-            background-color:orangered;
+            background-color:pink;
         }
         .controls {
             margin:auto;
@@ -28,11 +28,26 @@
         p{
             font-family: 'Courier New', Courier, monospace;
         }
+        video{
+          border-radius: 1000px 50px 1000px 50px;
+          position:absolute;
+          left:0;
+          top:0;
+          z-index:-1;
+        }
     </style>
     <script src="/socket.io/socket.io.js"></script>
     <script>
       let socket = io();
       let el;
+      let videoEl;
+      let buttonEl;
+      let vFile = 'www.thomasjohnmartinez.com/videos/wavesandparticlestrue.mp4';
+      let windText = ['woosh', 'shhh', 'pffff'];
+
+      function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+      }
 
       socket.on('time', (timeString) => {
         el = document.getElementById('server-time');
@@ -42,8 +57,15 @@
       socket.on('response', (controller) => {
         el = document.getElementById('gust-state');
         el.innerHTML = 'a new gust was initiated at ' +new Date().toTimeString();
+        farocki();
       });
-      
+      function farocki() {
+        videoEl = document.getElementById('lumi');
+        buttonEl = document.getElementById('buttonText');
+        //videoEl.style.borderRadius = Math.random()
+        buttonEl.innerHTML = windText[getRandomInt(windText.length)];
+        videoEl.src = 'https://www.thomasjohnmartinez.com/videos/wavesandparticlestrue.mp4'; 
+      }
       function gust(){
         socket.emit("controller", "gust");
       }
@@ -51,11 +73,10 @@
   </head>
   <body>
     <div class="controls">
-        <h1>the wind chime controller</h1>
+        <h1>an angel's breath</h1>
         <p>click the button to control the wind-chime</p>
-        <button onclick="gust()">woosh</button>
-        <p id="gust-state">the gust state</p>
-    </div>
-        
+        <button id = "buttonText" onclick="gust()">pffff</button>
+        <p id="gust-state">the gust state</p> 
+        <video autoplay id="lumi" ></video>        
   </body>
 </html>
