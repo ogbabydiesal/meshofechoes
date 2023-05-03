@@ -6,7 +6,9 @@
             margin:0;
             padding:0;
             margin-top:25px;
-            background-color:pink;
+            background-color:black;
+            color:whitesmoke;
+            text-shadow:1px 6px 4px rgb(253, 11, 249);
         }
         .controls {
             margin:auto;
@@ -20,19 +22,19 @@
             border-radius:1000px;
             border-style:solid;
             border-width:1px; 
-            height:80%;
+            height:25%;
             width:100%;
             cursor:pointer;
-            box-shadow:4px 4px 8px black;
+            color:whitesmoke;
+            box-shadow:1px 6px 8px rgb(253, 11, 249);
         }
         p{
             font-family: 'Courier New', Courier, monospace;
         }
         video{
-          
+          border-radius:10000px;
           position:absolute;
-          left:0;
-          top:0;
+          
           z-index:-1;
         }
     </style>
@@ -43,11 +45,16 @@
       let videoEl;
       let buttonEl;
       let vFile = 'www.thomasjohnmartinez.com/videos/wavesandparticlestrue.mp4';
-      let windText = ['woosh', 'shhh', 'pffff'];
-
+      let windText = ['wind', 'blow', 'gust'];
+      let vFiles = ['https://www.thomasjohnmartinez.com/videos/chime.mov_1.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_2.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_3.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_4.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_5.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_6.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_7.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_8.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_9.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_10.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_11.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_12.mp4'];
       function getRandomInt(max) {
         return Math.floor(Math.random() * max);
       }
+      const min = 0;
+      const max = window.innerWidth - 320;
+
+      // Clamp number between two values with the following line:
+      const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
       socket.on('time', (timeString) => {
         el = document.getElementById('server-time');
@@ -62,23 +69,35 @@
       function farocki() {
         videoEl = document.getElementById('lumi');
         buttonEl = document.getElementById('buttonText');
-        //videoEl.style.borderRadius = Math.random()
+        videoEl.style.left = clamp((Math.random() * window.innerWidth), min, max) +'px';
+        videoEl.style.top = (Math.random() * window.innerHeight - 90) +'px';
         buttonEl.innerHTML = windText[getRandomInt(windText.length)];
-        videoEl.src = 'https://www.thomasjohnmartinez.com/videos/wavesandparticlestrue.mp4'; 
-        videoEl.play();
-        
+        videoEl.src =  vFiles[getRandomInt(vFiles.length)];
+        videoEl.play();    
       }
+
       function gust(){
         socket.emit("controller", "gust");
       }
+
+      function stop(){
+        videoEl = document.getElementById('lumi');
+        videoEl.pause();
+        videoEl.src=null;
+        //socket.emit("stop", "now");
+      }
+
     </script>
   </head>
   <body>
     <div class="controls">
         <h1>an angel's breath</h1>
         <p>click the button to control the wind-chime</p>
-        <button id = "buttonText" onclick="gust()">pffff</button>
+        <button id = "buttonText" onclick="gust()">wind</button>
+        <button id = "buttonStop" onclick="stop()">shhh</button>
+        </br>
+        </br>
         <p id="gust-state">the gust state</p> 
-        <video playsinline autoplay id="lumi" ></video>        
+        <video loop playsinline autoplay id="lumi" ></video>        
   </body>
 </html>
