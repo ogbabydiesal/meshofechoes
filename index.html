@@ -35,9 +35,9 @@
         video{
           border-radius:10000px;
           position:absolute;
-          
           z-index:-1;
         }
+
     </style>
     <script type="text/javascript" src="https://cdn.cycling74.com/rnbo/latest/rnbo.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
@@ -52,6 +52,7 @@
       function getRandomInt(max) {
         return Math.floor(Math.random() * max);
       }
+
       const min = 0;
       const max = window.innerWidth - 320;
 
@@ -60,8 +61,9 @@
 
       const { createDevice } = RNBO;
       let context;
-
-      async function setup() {
+      const WAContext = window.AudioContext || window.webkitAudioContext;
+      context = new WAContext();
+      async function setup2() {
         const WAContext = window.AudioContext || window.webkitAudioContext;
         context = new WAContext();
         // Create gain node and connect it to audio output
@@ -69,9 +71,11 @@
         outputNode.connect(context.destination);
         
         // Fetch the exported patchers  
-        let response = await fetch('https://www.thomasjohnmartinez.com/videos/rnbo.filterdelay.json');
+        let response = await fetch('rnbo.filterdelay.json');
+        console.log(response);
         const delayPatcher = await response.json();
-        response = await fetch('https://www.thomasjohnmartinez.com/videos/rnbo.platereverb.json');
+        
+        response = await fetch('rnbo.platereverb.json');
         const reverbPatcher = await response.json();
       
         // Create the devices
@@ -87,6 +91,16 @@
         //get parameters   
       }
 
+      const setup = async () => {
+        let rawPatcher = await fetch('rnbo.filterdelay.json');
+        let patcher = await rawPatcher.json();
+
+        let device = await createDevice({ context, patcher });
+
+        // This connects the device to audio output, but you may still need to call context.resume()
+        // from a user-initiated function.
+        device.node.connect(context.destination);
+      };
       setup();
       socket.on('time', (timeString) => {
         el = document.getElementById('server-time');
@@ -107,8 +121,7 @@
         buttonEl.innerHTML = windText[getRandomInt(windText.length)];
         videoEl.src =  vFiles[getRandomInt(vFiles.length)];
         videoEl.play();
-        //const source = context.createMediaElementSource(videoEl);
-          
+        //const source = context.createMediaElementSource(videoEl);    
       }
 
       function gust(){
@@ -129,7 +142,8 @@
   </head>
   <body>
     <div class="controls">
-        <h1>an angel's breath</h1>
+        <h1 style='font-family:cursive'>the invisible hand</h1>
+        <p>a multi-user instrument</p>
         <p>click the button to control the wind-chime</p>
         <button id = "buttonText" onclick="gust()">wind</button>
         </br>
