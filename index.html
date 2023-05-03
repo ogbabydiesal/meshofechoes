@@ -80,6 +80,8 @@
 
       function gust(){
         socket.emit("controller", "gust");
+        videoEl = document.getElementById('lumi');
+        videoEl.muted = false; 
       }
 
       function stop(){
