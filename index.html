@@ -19,6 +19,7 @@
             font-size:calc(10vw);
             font-style: italic;
             background-color:transparent;
+            border-color:whitesmoke;
             border-radius:1000px;
             border-style:solid;
             border-width:1px; 
@@ -38,6 +39,7 @@
           z-index:-1;
         }
     </style>
+    <script type="text/javascript" src="https://cdn.cycling74.com/rnbo/latest/rnbo.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
       let socket = io();
@@ -56,6 +58,36 @@
       // Clamp number between two values with the following line:
       const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
+      const { createDevice } = RNBO;
+      let context;
+
+      async function setup() {
+        const WAContext = window.AudioContext || window.webkitAudioContext;
+        context = new WAContext();
+        // Create gain node and connect it to audio output
+        const outputNode = context.createGain();
+        outputNode.connect(context.destination);
+        
+        // Fetch the exported patchers  
+        let response = await fetch('https://www.thomasjohnmartinez.com/videos/rnbo.filterdelay.json');
+        const delayPatcher = await response.json();
+        response = await fetch('https://www.thomasjohnmartinez.com/videos/rnbo.platereverb.json');
+        const reverbPatcher = await response.json();
+      
+        // Create the devices
+        const delayDevice = await createDevice({ context, patcher: delayPatcher });
+        const reverbDevice = await createDevice({ context, patcher: reverbPatcher });
+        
+        // Connect the devices in series
+        videoEl = document.getElementById('lumi');
+        const source = context.createMediaElementSource(videoEl);
+        source.connect(delayDevice);
+        delayDevice.node.connect(reverbDevice.node);
+        reverbDevice.node.connect(outputNode);   
+        //get parameters   
+      }
+
+      setup();
       socket.on('time', (timeString) => {
         el = document.getElementById('server-time');
         el.innerHTML = 'Server time: ' + timeString;
@@ -66,6 +98,7 @@
         el.innerHTML = 'a new gust was initiated at ' +new Date().toTimeString();
         farocki();
       });
+
       function farocki() {
         videoEl = document.getElementById('lumi');
         buttonEl = document.getElementById('buttonText');
@@ -73,14 +106,15 @@
         videoEl.style.top = (Math.random() * window.innerHeight - 90) +'px';
         buttonEl.innerHTML = windText[getRandomInt(windText.length)];
         videoEl.src =  vFiles[getRandomInt(vFiles.length)];
-        //videoEl.load();
-        videoEl.play(); 
-        //videoEl.muted = false;   
+        videoEl.play();
+        //const source = context.createMediaElementSource(videoEl);
+          
       }
 
       function gust(){
         socket.emit("controller", "gust");
         videoEl = document.getElementById('lumi');
+        context.start();
         videoEl.muted = false; 
       }
 
@@ -88,7 +122,6 @@
         videoEl = document.getElementById('lumi');
         videoEl.pause();
         videoEl.src=null;
-        
         //socket.emit("stop", "now");
       }
 
@@ -99,6 +132,8 @@
         <h1>an angel's breath</h1>
         <p>click the button to control the wind-chime</p>
         <button id = "buttonText" onclick="gust()">wind</button>
+        </br>
+        </br>
         <button id = "buttonStop" onclick="stop()">shhh</button>
         </br>
         </br>
