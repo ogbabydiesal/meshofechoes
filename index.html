@@ -65,7 +65,8 @@
         //videoEl.style.borderRadius = Math.random()
         buttonEl.innerHTML = windText[getRandomInt(windText.length)];
         videoEl.src = 'https://www.thomasjohnmartinez.com/videos/wavesandparticlestrue.mp4'; 
-        videoEl.load();
+        videoEl.play();
+        
       }
       function gust(){
         socket.emit("controller", "gust");
