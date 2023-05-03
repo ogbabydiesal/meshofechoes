@@ -73,6 +73,7 @@
         videoEl.style.top = (Math.random() * window.innerHeight - 90) +'px';
         buttonEl.innerHTML = windText[getRandomInt(windText.length)];
         videoEl.src =  vFiles[getRandomInt(vFiles.length)];
+        videoEl.load();
         videoEl.play();    
       }
 
