@@ -1,21 +1,17 @@
 'use strict';
 
-const socketIO = require('socket.io');
 const express = require('express');
-const path = require('path');
-const app = module.exports.app = express();
-const port = 3000;
+const socketIO = require('socket.io');
 
-app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname, '/index.html'));
-});
-app.use(express.static(path.join(__dirname, 'public')));
+const app = express();
 
+const PORT = process.env.PORT || 3000;
+const INDEX = '/index.html';
+app.use(express.static('public'));
 
-const server = app.listen(port, () => {
-  console.log("Listening on port: " + port);
-});
-
+const server = express()
+  .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
+  .listen(PORT, () => console.log(`Listening on ${PORT}`));
 const io = socketIO(server);
 
 io.on('connection', (socket) => {
@@ -26,4 +22,3 @@ io.on('connection', (socket) => {
   });
   socket.on('disconnect', () => console.log('Client disconnected'));
 });
-
