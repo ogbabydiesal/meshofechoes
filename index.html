@@ -10,7 +10,7 @@
       let buttonEl;
       let vFile = 'www.thomasjohnmartinez.com/videos/wavesandparticlestrue.mp4';
       let windText = ['wind', 'blow', 'gust'];
-      let vFiles = ['https://www.thomasjohnmartinez.com/videos/chime.mov_1.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_2.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_3.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_4.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_5.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_6.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_7.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_8.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_9.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_10.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_11.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_12.mp4'];
+      let vFiles = ['https://www.thomasjohnmartinez.com/videos/chime.mov_1.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_2.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_3.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_4.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_5.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_6.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_7.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_8.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_9.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_10.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_11.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_12.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_1.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_2.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_3.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_4.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_5.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_6.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_7.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_8.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_9.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_10.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_11.mp4'];
       function getRandomInt(max) {
         return Math.floor(Math.random() * max);
       }
@@ -73,8 +73,10 @@
           text-align:center;  
       }
       button {
-        font-size:calc(10vw);
+        font-size:calc(7vw);
+        font-family:Georgia, 'Times New Roman', Times, serif;
         font-style: italic;
+        font-style: oblique;
         background-color:transparent;
         border-color:whitesmoke;
         border-radius:1000px;
@@ -98,9 +100,9 @@
   </head>
   <body>
     <div class="controls">
-        <h1>invisible breath</h1>
+        <h1>Gepetto's Ghost</h1>
         <p>a multi-user instrument</p>
-        <p>click the button to control the wind-chime</p>
+        <p>click the button below to control the wind-chime</p>
         </br>
         <button id = "buttonText" onclick="gust()">wind</button>
         </br>
