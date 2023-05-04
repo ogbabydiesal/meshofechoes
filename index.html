@@ -1,44 +1,6 @@
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <style>
-        body {
-            margin:0;
-            padding:0;
-            margin-top:25px;
-            background-color:black;
-            color:whitesmoke;
-            text-shadow:1px 6px 4px rgb(253, 11, 249);
-        }
-        .controls {
-            margin:auto;
-            width:80%;  
-            text-align:center;  
-        }
-        button {
-            font-size:calc(10vw);
-            font-style: italic;
-            background-color:transparent;
-            border-color:whitesmoke;
-            border-radius:1000px;
-            border-style:solid;
-            border-width:1px; 
-            height:25%;
-            width:100%;
-            cursor:pointer;
-            color:whitesmoke;
-            box-shadow:1px 6px 8px rgb(253, 11, 249);
-        }
-        p{
-            font-family: 'Courier New', Courier, monospace;
-        }
-        video{
-          border-radius:10000px;
-          position:absolute;
-          z-index:-1;
-        }
-
-    </style>
+    <link rel="stylesheet" type="text/css" href="/style.css">
     <script type="text/javascript" src="https://cdn.cycling74.com/rnbo/latest/rnbo.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
@@ -59,49 +21,6 @@
       // Clamp number between two values with the following line:
       const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
-      const { createDevice } = RNBO;
-      let context;
-      const WAContext = window.AudioContext || window.webkitAudioContext;
-      context = new WAContext();
-      async function setup2() {
-        const WAContext = window.AudioContext || window.webkitAudioContext;
-        context = new WAContext();
-        // Create gain node and connect it to audio output
-        const outputNode = context.createGain();
-        outputNode.connect(context.destination);
-        
-        // Fetch the exported patchers  
-        let response = await fetch('rnbo.filterdelay.json');
-        console.log(response);
-        const delayPatcher = await response.json();
-        
-        response = await fetch('rnbo.platereverb.json');
-        const reverbPatcher = await response.json();
-      
-        // Create the devices
-        const delayDevice = await createDevice({ context, patcher: delayPatcher });
-        const reverbDevice = await createDevice({ context, patcher: reverbPatcher });
-        
-        // Connect the devices in series
-        videoEl = document.getElementById('lumi');
-        const source = context.createMediaElementSource(videoEl);
-        source.connect(delayDevice);
-        delayDevice.node.connect(reverbDevice.node);
-        reverbDevice.node.connect(outputNode);   
-        //get parameters   
-      }
-
-      const setup = async () => {
-        let rawPatcher = await fetch('rnbo.filterdelay.json');
-        let patcher = await rawPatcher.json();
-
-        let device = await createDevice({ context, patcher });
-
-        // This connects the device to audio output, but you may still need to call context.resume()
-        // from a user-initiated function.
-        device.node.connect(context.destination);
-      };
-      setup();
       socket.on('time', (timeString) => {
         el = document.getElementById('server-time');
         el.innerHTML = 'Server time: ' + timeString;
@@ -127,7 +46,7 @@
       function gust(){
         socket.emit("controller", "gust");
         videoEl = document.getElementById('lumi');
-        context.start();
+        //context.start();
         videoEl.muted = false; 
       }
 
@@ -139,12 +58,50 @@
       }
 
     </script>
+    <style>
+      body {
+        margin:0;
+        padding:0;
+        margin-top:25px;
+        background-color:black;
+        color:whitesmoke;
+        text-shadow:1px 6px 4px rgb(253, 11, 249);
+        }
+      .controls {
+          margin:auto;
+          width:80%;  
+          text-align:center;  
+      }
+      button {
+        font-size:calc(10vw);
+        font-style: italic;
+        background-color:transparent;
+        border-color:whitesmoke;
+        border-radius:1000px;
+        border-style:solid;
+        border-width:1px; 
+        height:25%;
+        width:50%;
+        cursor:pointer;
+        color:whitesmoke;
+        box-shadow:1px 6px 8px rgb(253, 11, 249);
+      }
+      p{
+          font-family: 'Courier New', Courier, monospace;
+      }
+      video{
+        border-radius:10000px;
+        position:absolute;
+        z-index:-1;
+      }
+    </style>
   </head>
   <body>
     <div class="controls">
-        <h1 style='font-family:cursive'>the invisible hand</h1>
+        <h1>invisible breath</h1>
         <p>a multi-user instrument</p>
         <p>click the button to control the wind-chime</p>
+        </br>
         <button id = "buttonText" onclick="gust()">wind</button>
         </br>
         </br>
