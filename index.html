@@ -9,14 +9,14 @@
       let videoEl;
       let buttonEl;
       let vFile = 'www.thomasjohnmartinez.com/videos/wavesandparticlestrue.mp4';
-      let windText = ['wind', 'blow', 'gust'];
+      let windText = ['a wind', 'a cold chill', 'whispers'];
       let vFiles = ['https://www.thomasjohnmartinez.com/videos/chime.mov_1.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_2.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_3.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_4.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_5.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_6.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_7.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_8.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_9.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_10.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_11.mp4','https://www.thomasjohnmartinez.com/videos/chime.mov_12.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_1.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_2.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_3.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_4.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_5.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_6.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_7.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_8.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_9.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_10.mp4','https://www.thomasjohnmartinez.com/videos/chime2.mov_11.mp4'];
       function getRandomInt(max) {
         return Math.floor(Math.random() * max);
       }
 
       const min = 0;
-      const max = window.innerWidth - 320;
+      const max = window.innerWidth - 420;
 
       // Clamp number between two values with the following line:
       const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
@@ -28,7 +28,7 @@
 
       socket.on('response', (controller) => {
         el = document.getElementById('gust-state');
-        el.innerHTML = 'a new gust was initiated at ' +new Date().toTimeString();
+        el.innerHTML = 'a spirit was initiated at ' +new Date().toTimeString();
         farocki();
       });
 
@@ -65,7 +65,7 @@
         margin-top:25px;
         background-color:black;
         color:whitesmoke;
-        text-shadow:1px 6px 4px rgb(253, 11, 249);
+        text-shadow:1px 6px 4px blue;
         }
       .controls {
           margin:auto;
@@ -73,7 +73,7 @@
           text-align:center;  
       }
       button {
-        font-size:calc(7vw);
+        font-size:calc(4vw);
         font-family:Georgia, 'Times New Roman', Times, serif;
         font-style: italic;
         font-style: oblique;
@@ -92,7 +92,7 @@
           font-family: 'Courier New', Courier, monospace;
       }
       video{
-        border-radius:10000px;
+        border-radius:100px;
         position:absolute;
         z-index:-1;
       }
@@ -101,16 +101,16 @@
   <body>
     <div class="controls">
         <h1>Gepetto's Ghost</h1>
-        <p>a multi-user instrument</p>
-        <p>click the button below to control the wind-chime</p>
+        <p>a multi-user cyber haunting</p>
+        <p>click the button below to cross the threshold</p>
         </br>
-        <button id = "buttonText" onclick="gust()">wind</button>
-        </br>
-        </br>
-        <button id = "buttonStop" onclick="stop()">shhh</button>
+        <button id = "buttonText" onclick="gust()">a wind</button>
         </br>
         </br>
-        <p id="gust-state">the gust state</p> 
-        <video autoplay muted loop playsinline id="lumi" ></video>        
+        <button id = "buttonStop" onclick="stop()">excorcist</button>
+        </br>
+        </br>
+        <p id="gust-state">the ghost state</p> 
+        <video width = "420" autoplay muted loop playsinline id="lumi" ></video>        
   </body>
 </html>
