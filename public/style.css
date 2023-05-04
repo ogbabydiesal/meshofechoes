@@ -4,32 +4,34 @@ body {
     margin-top:25px;
     background-color:black;
     color:whitesmoke;
-    text-shadow:1px 6px 4px rgb(253, 11, 249);
-}
-.controls {
-    margin:auto;
-    width:80%;  
-    text-align:center;  
-}
-button {
-    font-size:calc(10vw);
+    text-shadow:1px 6px 4px blue;
+    }
+  .controls {
+      margin:auto;
+      width:80%;  
+      text-align:center;  
+  }
+  button {
+    font-size:calc(4vw);
+    font-family:Georgia, 'Times New Roman', Times, serif;
     font-style: italic;
+    font-style: oblique;
     background-color:transparent;
     border-color:whitesmoke;
     border-radius:1000px;
     border-style:solid;
     border-width:1px; 
     height:25%;
-    width:100%;
+    width:50%;
     cursor:pointer;
     color:whitesmoke;
     box-shadow:1px 6px 8px rgb(253, 11, 249);
-}
-p{
-    font-family: 'Courier New', Courier, monospace;
-}
-video{
-  border-radius:10000px;
-  position:absolute;
-  z-index:-1;
-}
+  }
+  p{
+      font-family: 'Courier New', Courier, monospace;
+  }
+  video{
+    border-radius:100px;
+    position:absolute;
+    z-index:-1;
+  }
