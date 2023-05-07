@@ -2,6 +2,7 @@
   <head>
     <link rel="stylesheet" type="text/css" href="/style.css">
     <script type="text/javascript" src="https://cdn.cycling74.com/rnbo/1.1.0/rnbo.min.js"></script>
+    
     <script src="/socket.io/socket.io.js"></script>
     <script>
       const { createDevice } = RNBO;
@@ -30,15 +31,26 @@
         farocki();
       });
 
-      socket.on('left', (lefty) => {
+      socket.on('disconnected', (lefty) => {
         el = document.getElementById('user-state');
         el.innerHTML = lefty;
+      });
+
+      socket.on('connecty', (joiny) => {
+        el = document.getElementById('user-state');
+        el.innerHTML = joiny + new Date().toTimeString();
+      });
+
+      socket.on('numUsers', (joiny) => {
+        el = document.getElementById('numUsers');
+        el.innerHTML = 'there are ' + joiny + ' users online';
       });
 
       function farocki() {
         videoEl = document.getElementById('lumi');
         buttonEl = document.getElementById('buttonText');
         let rotation = Math.random() * 360 - 90;
+        //rotation = map(rotation, 0, 360, -45, 45);
         videoEl.style.transform = "rotate("+ rotation+"deg)";
         videoEl.style.left = clamp((Math.random() * window.innerWidth), min, max) +'px';
         videoEl.style.top = (Math.random() * window.innerHeight - 300) +'px';
@@ -101,6 +113,7 @@
         </br>
         </br>
         <p id="user-state">user state</p> 
+        <p id="numUsers">there is 1 user online</p> 
         <video width = "420" autoplay muted loop playsinline id="lumi" ></video>        
   </body>
 </html>
