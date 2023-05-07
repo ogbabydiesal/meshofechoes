@@ -10,8 +10,7 @@
       let el;
       let videoEl;
       let buttonEl;
-      let windText = ['a wind', 'a cold chill', 'whispers', 'listen'];
-      let vFiles = ['video/chime.mov_1.mp4','video/chime.mov_2.mp4','video/chime.mov_3.mp4','video/chime.mov_4.mp4','video/chime.mov_5.mp4','video/chime.mov_6.mp4','video/chime.mov_7.mp4','video/chime.mov_8.mp4','video/chime.mov_9.mp4','video/chime.mov_10.mp4','video/chime.mov_11.mp4','video/chime.mov_12.mp4','video/chime2.mov_1.mp4','video/chime2.mov_2.mp4','video/chime2.mov_3.mp4','video/chime2.mov_4.mp4','video/chime2.mov_5.mp4','video/chime2.mov_6.mp4','video/chime2.mov_7.mp4','video/chime2.mov_8.mp4','video/chime2.mov_9.mp4','video/chime2.mov_10.mp4','video/chime2.mov_11.mp4'];
+      let vFiles = ['video/vid0.mp4', 'video/vid1.mp4', 'video/vid2.mp4', 'video/vid3.mp4', 'video/vid4.mp4', 'video/vid5.mp4', 'video/vid6.mp4', 'video/vid7.mp4', 'video/vid8.mp4', 'video/vid9.mp4', 'video/vid10.mp4', 'video/vid11.mp4', 'video/vid12.mp4', 'video/vid13.mp4', 'video/vid14.mp4', 'video/vid15.mp4', 'video/vid16.mp4', 'video/vid17.mp4', 'video/vid18.mp4', 'video/vid19.mp4', 'video/vid20.mp4', 'video/vid21.mp4', 'video/vid22.mp4', 'video/vid23.mp4', 'video/vid24.mp4', 'video/vid25.mp4', 'video/vid26.mp4', 'video/vid27.mp4', 'video/vid28.mp4', 'video/vid29.mp4', 'video/vid30.mp4', 'video/vid31.mp4', 'video/vid32.mp4', 'video/vid33.mp4', 'video/vid34.mp4', 'video/vid35.mp4', 'video/vid36.mp4', 'video/vid37.mp4', 'video/vid38.mp4', 'video/vid39.mp4', 'video/vid40.mp4', 'video/vid41.mp4', 'video/vid42.mp4', 'video/vid43.mp4', 'video/vid44.mp4', 'video/vid45.mp4', 'video/vid46.mp4', 'video/vid47.mp4', 'video/vid48.mp4', 'video/vid49.mp4', 'video/vid50.mp4', 'video/vid51.mp4', 'video/vid52.mp4', 'video/vid53.mp4', 'video/vid54.mp4'];
       
       function getRandomInt(max) {
         return Math.floor(Math.random() * max);
@@ -23,31 +22,34 @@
       // Clamp number between two values with the following line:
       const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
-      socket.on('time', (timeString) => {
-        el = document.getElementById('server-time');
-        el.innerHTML = 'Server time: ' + timeString;
-      });
+      
 
       socket.on('response', (controller) => {
-        el = document.getElementById('gust-state');
-        el.innerHTML = 'a presence was detected at ' +new Date().toTimeString();
+        el = document.getElementById('user-state');
+        el.innerHTML = 'a user initiated an action at ' + new Date().toTimeString();
         farocki();
+      });
+
+      socket.on('left', (lefty) => {
+        el = document.getElementById('user-state');
+        el.innerHTML = lefty;
       });
 
       function farocki() {
         videoEl = document.getElementById('lumi');
         buttonEl = document.getElementById('buttonText');
+        let rotation = Math.random() * 360 - 90;
+        videoEl.style.transform = "rotate("+ rotation+"deg)";
         videoEl.style.left = clamp((Math.random() * window.innerWidth), min, max) +'px';
-        videoEl.style.top = (Math.random() * window.innerHeight - 90) +'px';
-        buttonEl.innerHTML = windText[getRandomInt(windText.length)];
+        videoEl.style.top = (Math.random() * window.innerHeight - 300) +'px';
         videoEl.src =  vFiles[getRandomInt(vFiles.length)];
         videoEl.playbackRate = Math.random();
-        videoEl.play();
-        //const source = context.createMediaElementSource(videoEl);    
+        
+        videoEl.play();   
       }
 
-      function gust(){
-        socket.emit("controller", "gust");
+      function gesture(){
+        socket.emit("controller", "gesture");
         //videoEl = document.getElementById('lumi');
         videoEl.muted = false;
         context.resume();
@@ -88,17 +90,17 @@
   </head>
   <body>
     <div class="controls">
-        <h1>Gepetto's Ghost</h1>
-        <p>a multi-user cyber haunting</p>
-        <p>click the button below to cross the threshold</p>
+        <h1>USER</h1>
+        <p>a multi-participant composition by Tommy (2023)</p>
+        <p>click the button button to control the network</p>
         </br>
-        <button id = "buttonText" onclick="gust()">a wind</button>
-        </br>
-        </br>
-        <button id = "buttonStop" onclick="stop()">exorcist</button>
+        <button id = "buttonText" onclick="gesture()">reach out</button>
         </br>
         </br>
-        <p id="gust-state">the ghost state</p> 
+        <button id = "buttonStop" onclick="stop()">stop</button>
+        </br>
+        </br>
+        <p id="user-state">user state</p> 
         <video width = "420" autoplay muted loop playsinline id="lumi" ></video>        
   </body>
 </html>

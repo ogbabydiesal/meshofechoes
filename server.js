@@ -25,6 +25,6 @@ io.on('connection', (socket) => {
     console.log(arg); //gust
     io.emit('response', arg);
   });
-  socket.on('disconnect', () => console.log('Client disconnected'));
+  socket.on('disconnect', () => console.log('Client disconnected'), io.emit('left','a user left'));
 });
 
