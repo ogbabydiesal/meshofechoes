@@ -46,7 +46,7 @@
         if (joiny > 1) {
           el.innerHTML = 'there are ' + joiny + ' users online';
         } else {
-          el.innerHTML = 'you are the only person here...';
+          el.innerHTML = 'you are the only person here, send someone the link to join the party...';
         }
         
       });
@@ -87,7 +87,6 @@
           const delayPatcher = await response.json();
           response = await fetch("rnbo.platereverb.json");
           const reverbPatcher = await response.json();
-        
           // Create the devices
           const delayDevice = await createDevice({ context, patcher: delayPatcher });
           const reverbDevice = await createDevice({ context, patcher: reverbPatcher });
@@ -98,7 +97,6 @@
           delayDevice.node.connect(reverbDevice.node);
           reverbDevice.node.connect(outputNode);
       }
-
       setup();
     </script>
   </head>
@@ -115,7 +113,7 @@
         </br>
         </br>
         <p id="user-state">user state</p> 
-        <p id="numUsers">there is 1 user online</p> 
-        <video width = "420" autoplay muted loop playsinline id="lumi" ></video>        
+        <p id="numUsers"></p> 
+        <video width = "420" autoplay muted loop playsinline id="lumi"></video>        
   </body>
 </html>
