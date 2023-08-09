@@ -1,4 +1,4 @@
-# chime-server
+# TV Party
  a multi-user audio-visual work
 
  uses socket.io to allow multiple participants to trigger video.
