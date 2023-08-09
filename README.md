@@ -1,5 +1,8 @@
 # chime-server
- a multi-user audio visual work
+ a multi-user audio-visual work
 
  uses socket.io to allow multiple participants to trigger video.
- video is processed via Cycling74's RNBO in a web audio graph.
+ Video is processed via Cycling74's RNBO in a web audio graph.
+
+# installation
+run `npm install` and `npm start`

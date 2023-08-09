@@ -27,7 +27,7 @@
 
       socket.on('response', (controller) => {
         el = document.getElementById('user-state');
-        el.innerHTML = 'a user initiated an action at ' + new Date().toTimeString();
+        el.innerHTML = 'someone changed the video ' + new Date().toTimeString();
         farocki();
       });
 
@@ -43,26 +43,28 @@
 
       socket.on('numUsers', (joiny) => {
         el = document.getElementById('numUsers');
-        el.innerHTML = 'there are ' + joiny + ' users online';
+        if (joiny > 1) {
+          el.innerHTML = 'there are ' + joiny + ' users online';
+        } else {
+          el.innerHTML = 'you are the only person here...';
+        }
+        
       });
 
       function farocki() {
         videoEl = document.getElementById('lumi');
         buttonEl = document.getElementById('buttonText');
         let rotation = Math.random() * 360 - 90;
-        //rotation = map(rotation, 0, 360, -45, 45);
         videoEl.style.transform = "rotate("+ rotation+"deg)";
         videoEl.style.left = clamp((Math.random() * window.innerWidth), min, max) +'px';
         videoEl.style.top = (Math.random() * window.innerHeight - 300) +'px';
         videoEl.src =  vFiles[getRandomInt(vFiles.length)];
-        videoEl.playbackRate = Math.random();
-        
+        videoEl.playbackRate = Math.random(); 
         videoEl.play();   
       }
 
       function gesture(){
         socket.emit("controller", "gesture");
-        //videoEl = document.getElementById('lumi');
         videoEl.muted = false;
         context.resume();
       }
@@ -102,8 +104,8 @@
   </head>
   <body>
     <div class="controls">
-        <h1>USER</h1>
-        <p>a multi-participant composition by Tommy (2023)</p>
+        <h1>TV PARTY</h1>
+        <p>a multi-participant audio-visual work by Tommy (2023)</p>
         <p>click the button button to control the network</p>
         </br>
         <button id = "buttonText" onclick="gesture()">reach out</button>
