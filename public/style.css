@@ -1,6 +1,4 @@
 body {
-    margin:25px;
-    padding:25px;
     margin-top:25px;
     background-color:whitesmoke;
     color:black;
@@ -8,7 +6,6 @@ body {
     }
 
   .controls {
-      
       text-align:center;  
   }
 
