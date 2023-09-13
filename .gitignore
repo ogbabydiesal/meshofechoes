@@ -1,3 +1,6 @@
+.gitattributes
+.DS_Store
+client/
 # Logs
 logs
 *.log
