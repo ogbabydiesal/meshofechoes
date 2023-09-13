@@ -47,8 +47,11 @@
         }  
       });
 
-      let pitchset1 = ["D1", "D2", "D2", "F3"];
+      let pitchset1 = ["D1", "D2", "D2", "F1", "D0", "C2", "C4", "C3"];
       let pitchset2 = ["A3", "E2", "D#4", "A5"];
+
+      let pitchset3 = ["D1", "C2", "C#2", "F3", "G1", "G#2", "C#2", "F3"];
+      let pitchset4 = ["B3", "D2", "D4", "A5"];
       
 
       socket.on('time', (time) => {
@@ -58,12 +61,26 @@
           let beat = time % 4;
           console.log(beat);
           if (beat == 0 && Math.random() > .3) {
-            console.log('i triggered');
-            synth.triggerAttackRelease(pitchset1[getRandomInt(pitchset1.length)], "8n")
+            if (time > 60 ) {
+              console.log('i triggered');
+            synth.triggerAttackRelease(pitchset3[getRandomInt(pitchset3.length)], "8n")
+            }
+            else {
+              console.log('i triggered');
+              synth.triggerAttackRelease(pitchset1[getRandomInt(pitchset1.length)], "8n")
+            }
+            
           }
           if (beat == 1 && Math.random() > .7) {
-            console.log('i triggered');
+            if (time > 60) {
+              console.log('i triggered');
+            synth.triggerAttackRelease(pitchset4[getRandomInt(pitchset4.length)], "8n")
+            }
+            else {
+              console.log('i triggered');
             synth.triggerAttackRelease(pitchset2[getRandomInt(pitchset2.length)], "8n")
+            }
+            
           }
           if (beat == 2 && Math.random() > .5) {
             console.log('i triggered');
