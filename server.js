@@ -38,7 +38,7 @@ function timeKeeper() {
   setTimeout(() => {
     time += 1;
     io.emit('time', time);
-    if (time == 300) {
+    if (time == 100) {
       time = 0;
     }
     timeKeeper();

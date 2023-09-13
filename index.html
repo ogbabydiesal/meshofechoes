@@ -52,7 +52,8 @@
       
 
       socket.on('time', (time) => {
-        console.log(time);
+        timey = document.getElementById('time-point');
+        timey.innerHTML = 'synchronized timepoint ' + time + '/100';
         if (isPlaying) {
           let beat = time % 4;
           console.log(beat);
@@ -83,12 +84,13 @@
         if (!isPlaying) {
           isPlaying = true;
           context.resume();
-          
+          document.querySelector(".buttonText").innerHTML = "stop";
           
         }
         else {
           isPlaying = false;
           context.suspend();
+          document.querySelector(".buttonText").innerHTML = "start";
           //Tone.pause();
         }
         //player.start();
@@ -196,6 +198,7 @@
         <p>2) visit the Sixty Point Sync URL</p>
         <p>3) press start at around the same time</p>
         <p class = "buttonText" onclick="start()">start</button></p>
+        <p id="time-point">synchronized timepoint ??/100</p>
         <p id="user-state">you are the only person here, send someone the link to join the piece...</p>
         <p id="numUsers"></p>  
     </div>       
