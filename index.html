@@ -3,19 +3,21 @@
     <link rel="stylesheet" type="text/css" href="/style.css">
     <script type="text/javascript" src="https://cdn.cycling74.com/rnbo/1.1.0/rnbo.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="Tone.js"></script>
     <script>
       const { createDevice } = RNBO;
       let context;
+      let joiny = 0;
+      let player;
+      let synth;
+      let now;
       let socket = io();
-      let el;
-      let videoEl;
-      let buttonEl;
-      let vFiles = ['video/vid0.mp4', 'video/vid1.mp4', 'video/vid2.mp4', 'video/vid3.mp4', 'video/vid4.mp4', 'video/vid5.mp4', 'video/vid6.mp4', 'video/vid7.mp4', 'video/vid8.mp4', 'video/vid9.mp4', 'video/vid10.mp4', 'video/vid11.mp4', 'video/vid12.mp4', 'video/vid13.mp4', 'video/vid14.mp4', 'video/vid15.mp4', 'video/vid16.mp4', 'video/vid17.mp4', 'video/vid18.mp4', 'video/vid19.mp4', 'video/vid20.mp4', 'video/vid21.mp4', 'video/vid22.mp4', 'video/vid23.mp4', 'video/vid24.mp4', 'video/vid25.mp4', 'video/vid26.mp4', 'video/vid27.mp4', 'video/vid28.mp4', 'video/vid29.mp4', 'video/vid30.mp4', 'video/vid31.mp4', 'video/vid32.mp4', 'video/vid33.mp4', 'video/vid34.mp4', 'video/vid35.mp4', 'video/vid36.mp4', 'video/vid37.mp4', 'video/vid38.mp4', 'video/vid39.mp4', 'video/vid40.mp4', 'video/vid41.mp4', 'video/vid42.mp4', 'video/vid43.mp4', 'video/vid44.mp4', 'video/vid45.mp4', 'video/vid46.mp4', 'video/vid47.mp4', 'video/vid48.mp4', 'video/vid49.mp4', 'video/vid50.mp4', 'video/vid51.mp4', 'video/vid52.mp4', 'video/vid53.mp4', 'video/vid54.mp4'];
+      let isPlaying = false;
 
       function getRandomInt(max) {
         return Math.floor(Math.random() * max);
       }
-
+      
       const min = 0;
       const max = window.innerWidth - 420;
 
@@ -24,7 +26,6 @@
       socket.on('response', (controller) => {
         el = document.getElementById('user-state');
         el.innerHTML = 'someone changed the video ' + new Date().toTimeString();
-        farocki();
       });
 
       socket.on('disconnected', (lefty) => {
@@ -46,43 +47,65 @@
         }  
       });
 
-      socket.on('time', (haha) => {
-        console.log(haha);
+      let pitchset1 = ["D1", "D2", "D2", "F3"];
+      let pitchset2 = ["A3", "E2", "D#4", "A5"];
+      
+
+      socket.on('time', (time) => {
+        console.log(time);
+        if (isPlaying) {
+          let beat = time % 4;
+          console.log(beat);
+          if (beat == 0 && Math.random() > .3) {
+            console.log('i triggered');
+            synth.triggerAttackRelease(pitchset1[getRandomInt(pitchset1.length)], "8n")
+          }
+          if (beat == 1 && Math.random() > .7) {
+            console.log('i triggered');
+            synth.triggerAttackRelease(pitchset2[getRandomInt(pitchset2.length)], "8n")
+          }
+          if (beat == 2 && Math.random() > .5) {
+            console.log('i triggered');
+            synth.triggerAttackRelease(pitchset1[getRandomInt(pitchset1.length)], "8n")
+          }
+          if (beat == 3 && Math.random() > .7) {
+            console.log('i triggered');
+            synth.triggerAttackRelease(pitchset2[getRandomInt(pitchset2.length)], "8n")
+          }
+        }
       });
 
-      
-      
-
-      function farocki() {
-        videoEl = document.getElementById('lumi');
-        buttonEl = document.getElementById('buttonText');
-        let rotation = Math.random() * 360 - 90;
-        videoEl.style.transform = "rotate("+ rotation+"deg)";
-        videoEl.style.left = clamp((Math.random() * window.innerWidth), min, max) +'px';
-        videoEl.style.top = (Math.random() * window.innerHeight - 300) +'px';
-        videoEl.src =  vFiles[getRandomInt(vFiles.length)];
-        videoEl.playbackRate = Math.random(); 
-        videoEl.play();   
-      }
-
-      function gesture(){
-        socket.emit("controller", "gesture");
-        videoEl.muted = false;
-        context.resume();
+      function start(){
+        //socket.emit("controller", "gesture");
+        //videoEl.muted = false;
+        Tone.start();
+        
+        if (!isPlaying) {
+          isPlaying = true;
+          context.resume();
+          
+          
+        }
+        else {
+          isPlaying = false;
+          context.suspend();
+          //Tone.pause();
+        }
+        //player.start();
+        
       }
 
       function stop(){
-        videoEl = document.getElementById('lumi');
-        videoEl.pause();
-        videoEl.src=null;
+        context.suspend();
       }
 
       async function setup() {
           const WAContext = window.AudioContext || window.webkitAudioContext;
           context = new WAContext();
-          // Create gain node and connect it to audio output
+          Tone.context = context;
+          // Create gain node
           const outputNode = context.createGain();
-          outputNode.connect(context.destination);
+          
           // Fetch the exported patchers
           let response = await fetch("rnbo.filterdelay.json");
           const delayPatcher = await response.json();
@@ -90,34 +113,92 @@
           const reverbPatcher = await response.json();
           // Create the devices
           const delayDevice = await createDevice({ context, patcher: delayPatcher });
-          const reverbDevice = await createDevice({ context, patcher: reverbPatcher });
-          videoEl = document.getElementById('lumi');
-          const source = context.createMediaElementSource(videoEl);
+          const reverbDevice = await createDevice({ context, patcher: reverbPatcher });/*
+          const samples = new Tone.ToneAudioBuffers({
+            0 : "sounds/root/sample_0.mp3",
+            1 : "sounds/gtr/cluster_1/sample_1.mp3",
+            2 : "sounds/gtr/cluster_1/sample_2.mp3",
+            3 : "sounds/gtr/cluster_1/sample_3.mp3",
+            4 : "sounds/gtr/cluster_1/sample_4.mp3",
+            5 : "sounds/gtr/cluster_1/sample_5.mp3",
+            6 : "sounds/gtr/cluster_1/sample_6.mp3",
+            7 : "sounds/gtr/cluster_1/sample_7.mp3",
+            8 : "sounds/gtr/cluster_1/sample_8.mp3",
+            9 : "sounds/gtr/cluster_1/sample_9.mp3",
+            10 : "sounds/gtr/cluster_1/sample_10.mp3",
+            11 : "sounds/gtr/cluster_1/sample_11.mp3",
+            12 : "sounds/gtr/cluster_1/sample_12.mp3",
+            13 : "sounds/gtr/cluster_1/sample_13.mp3",
+            14 : "sounds/gtr/cluster_1/sample_14.mp3",
+            15 : "sounds/gtr/cluster_1/sample_15.mp3",
+            16 : "sounds/gtr/cluster_1/sample_16.mp3",
+            17 : "sounds/gtr/cluster_1/sample_17.mp3",
+            18 : "sounds/gtr/cluster_1/sample_18.mp3",
+            19 : "sounds/gtr/cluster_1/sample_19.mp3",
+            20 : "sounds/gtr/cluster_1/sample_20.mp3",
+            21 : "sounds/gtr/cluster_1/sample_21.mp3",
+            22 : "sounds/gtr/cluster_1/sample_22.mp3",
+            23 : "sounds/gtr/cluster_1/sample_23.mp3",
+            24 : "sounds/gtr/cluster_1/sample_24.mp3",
+            25 : "sounds/gtr/cluster_1/sample_25.mp3",
+            26 : "sounds/gtr/cluster_1/sample_26.mp3",
+            27 : "sounds/gtr/cluster_2/sample_1.mp3",
+            28 : "sounds/gtr/cluster_2/sample_2.mp3",
+            29 : "sounds/gtr/cluster_2/sample_3.mp3",
+            30 : "sounds/gtr/cluster_2/sample_4.mp3",
+            31 : "sounds/gtr/cluster_2/sample_5.mp3",
+            32 : "sounds/gtr/cluster_2/sample_6.mp3",
+            33 : "sounds/gtr/cluster_2/sample_7.mp3",
+            34 : "sounds/gtr/cluster_2/sample_8.mp3",
+            35 : "sounds/gtr/cluster_2/sample_9.mp3",
+            36 : "sounds/gtr/cluster_2/sample_10.mp3",
+            37 : "sounds/gtr/cluster_2/sample_11.mp3",
+            38 : "sounds/gtr/cluster_2/sample_12.mp3",
+            39 : "sounds/gtr/cluster_2/sample_13.mp3",
+            40 : "sounds/gtr/cluster_2/sample_14.mp3",
+            41 : "sounds/gtr/cluster_2/sample_15.mp3",
+            42 : "sounds/gtr/cluster_2/sample_16.mp3",
+            43 : "sounds/gtr/cluster_2/sample_17.mp3",
+            44 : "sounds/gtr/cluster_2/sample_18.mp3",
+            45 : "sounds/gtr/cluster_2/sample_19.mp3",
+            46 : "sounds/gtr/cluster_2/sample_20.mp3",
+            47 : "sounds/gtr/cluster_2/sample_0.mp3",
+          }, () => {
+            document.querySelector(".buttonText").innerHTML = "start";
+          });
+          */
+          //player = new Tone.Player("https://tonejs.github.io/audio/berklee/gong_1.mp3").toDestination();
+          synth = new Tone.Synth().toDestination();
+          now = Tone.now()
+          
+          //const source = context.createMediaElementSource(videoEl);
           // Connect the devices in series
-          source.connect(delayDevice.node);
-          delayDevice.node.connect(reverbDevice.node);
-          reverbDevice.node.connect(outputNode);
+          //player.connect(outputNode);
+          //outputNode.connect(context.destination);
+          //Tone.connect(delayDevice.node, reverbDevice.node)
+          //Tone.connect(reverbDevice.node, outputNode)
+          //Tone.connect(outputNode, context.destination);
+          //delayDevice.node.connect(reverbDevice.node);
+          //reverbDevice.node.connect(outputNode);
+          //outputNode.connect(context.destination);
       }
+
       setup();
     </script>
   </head>
   <body>
-    <div class="controls">
-        <h1>TV PARTY</h1>
-        <p>a multi-participant audio-visual work by Tommy (2023)</p>
-        <p>click the button button to control the network</p>
-        </br>
-        <div class ="controller">
-          <button id = "buttonText" onclick="gesture()">click</button>
-          </br>
-          </br>
-          <button id = "buttonStop" onclick="stop()">stop</button>
-          </br>
-          </br>
-        </div>
+    <div class="main">
+        <h1>Sixty Point Sync</h1>
+        <h2>Tommy (2023)</h2>
+        <p>an electronically linked composition for two or more local web browsers</p>
         <br>
+        <p style="color:red">instructions</p>
+        <p>1)in the same room, stand apart from each other</p>
+        <p>2)visit the Sixty Point Sync URL</p>
+        <p>3)press start at around the same time</p>
+        <p class = "buttonText" onclick="start()">start</button></p>
         <p id="user-state">you are the only person here, send someone the link to join the party...</p>
-        <p id="numUsers"></p> 
-        <video width = "420" autoplay muted loop playsinline id="lumi"></video>        
+        <p id="numUsers"></p>  
+    </div>       
   </body>
 </html>

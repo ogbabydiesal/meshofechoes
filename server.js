@@ -34,4 +34,17 @@ io.on('connection', (socket) => {
 
 let time = 0;
 
+function timeKeeper() {
+  setTimeout(() => {
+    time += 1;
+    io.emit('time', time);
+    if (time == 300) {
+      time = 0;
+    }
+    timeKeeper();
+  }, "1000"); 
+}
+
+timeKeeper();
+
 

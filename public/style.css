@@ -1,46 +1,22 @@
 body {
     margin-top:25px;
     background-color:whitesmoke;
-    color:black;
-    text-shadow:1px 2px 14px blue;
+    color:black; 
     }
 
-  .controls {
+  .main {
       text-align:center;  
   }
 
-  .controller {
-    width:230px;
-    margin:auto;
-    display:block;
-    padding-top:24px;
-    background-color: rgba(0, 0, 0, .5);
-    border-radius: 80px 80px 100px 100px;
-    box-shadow: 10px 10px 10px black;
+  p{
+      font-family:cursive;
   }
 
-  button {
-    font-size:calc(2vw);
-    font-family:Georgia, 'Times New Roman', Times, serif;
-    font-style: italic;
-    font-style: oblique;
-    background-color:transparent;
-    border-color:black;
-    border-radius:1000px;
-    border-style:solid;
-    border-width:1px; 
-    height:100px;
-    width:100px;
+  .buttonText {
+    font-size: 13vw;
     cursor:pointer;
-    color:black;
-    box-shadow:1px 6px 8px black;
-  }
-  p{
-      font-family: 'Courier New', Courier, monospace;
-  }
-  video{
-    position:absolute;
-    z-index:-1;
+    font-style:oblique;
+    text-decoration:wavy;
   }
 
   #user-state {
