@@ -58,6 +58,7 @@ function timeKeeper() {
       if (ticks % 16 == 0) {
         time += 1;
       }
+      
       if (time > 2 && time < 30) {
         let part = getRandomInt(participant.length);
         let params = { 
@@ -67,9 +68,54 @@ function timeKeeper() {
           "noteLength": 10,
           "attack": 10,
           "release": 1,
-          "mix": 0
+          "mix": Math.random() * 20
         };
         io.to(participant[part]).emit('synthParams', params);
+      }
+      if (time > 35 && time < 65) {
+        let part = getRandomInt(participant.length);
+        if (ticks % 16 == 0 && Math.random() > 0.33) {
+          let params = { 
+            "root" : roots[0],
+            "degree" : getRandomInt(20),
+            "deviation" : Math.random() * 2 - 1,
+            "noteLength": 6000,
+            "attack": 1000,
+            "release": 1000,
+            "mix": Math.random() * 20 + 15
+          };
+          io.to(participant[part]).emit('synthParams', params);
+        }
+      }
+      if (time > 72 && time < 92) {
+        let part = getRandomInt(participant.length);
+        if (ticks % 16 == 0 && Math.random() > 0.33 || ticks % 2 == 0 && Math.random() > 0.33) {
+          let params = { 
+            "root" : roots[getRandomInt(roots.length)],
+            "degree" : getRandomInt(20),
+            "deviation" : Math.random() * 4 - 2,
+            "noteLength": Math.random() * 1000 + 10,
+            "attack": Math.random() * 1000 + 10,
+            "release": Math.random() * 1000 + 10,
+            "mix": Math.random() * 20
+          };
+          io.to(participant[part]).emit('synthParams', params);
+        }
+      }
+      if (time > 92 && time < 110) {
+        let part = getRandomInt(participant.length);
+        if (ticks % 16 == 0 && Math.random() > 0.33 || ticks % 2 == 0 && Math.random() > 0.33 || ticks % 1 == 0 && Math.random() > 0.55) {
+          let params = { 
+            "root" : roots[getRandomInt(roots.length)],
+            "degree" : getRandomInt(20),
+            "deviation" : Math.random() * 4 - 2,
+            "noteLength": Math.random() * 1000 + 10,
+            "attack": Math.random() * 1000 + 10,
+            "release": Math.random() * 1000 + 10,
+            "mix": Math.random() * 20
+          };
+          io.to(participant[part]).emit('synthParams', params);
+        }
       }
       if (time == 120) {
         time = 0;

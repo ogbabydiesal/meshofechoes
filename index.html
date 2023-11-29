@@ -84,7 +84,7 @@
         }
         else {
           isPlaying = false;
-          context.suspend();
+          //context.suspend();
           document.querySelector(".buttonText").innerHTML = "start";
           socket.emit('isPlaying', isPlaying);
         }        
@@ -136,6 +136,8 @@
         <p>1) in the same room, stand apart from each other</p>
         <p>2) visit the Sixty Point Sync URL</p>
         <p>3) press start at around the same time</p>
+        <p style="color:red">control</p>
+        <p>4) you may stop or start the piece for everyone in the group</p>
         <p class = "buttonText" onclick="start()">start</button></p>
         <p id="time-point">synchronized timepoint 000 /100</p>
         <p id="user-state">you are the only person here, send someone the link to join the piece...</p>
