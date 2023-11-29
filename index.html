@@ -1,9 +1,8 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="/style.css">
-    <script type="text/javascript" src="https://cdn.cycling74.com/rnbo/1.1.0/rnbo.min.js"></script>
+    <script type="text/javascript" src="https://cdn.cycling74.com/rnbo/latest/rnbo.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="Tone.js"></script>
     <script>
       const { createDevice } = RNBO;
       let context;
@@ -13,19 +12,43 @@
       let now;
       let socket = io();
       let isPlaying = false;
-
+      let degree;
+      let deviation;
+      let noteLength;
+      let attack;
+      let release;
+      let mix;
+      // helper functions
       function getRandomInt(max) {
         return Math.floor(Math.random() * max);
       }
       
       const min = 0;
       const max = window.innerWidth - 420;
-
-      // Clamp number between two values with the following line:
+      
       const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
-      socket.on('response', (controller) => {
-        el = document.getElementById('user-state');
-        el.innerHTML = 'someone changed the video ' + new Date().toTimeString();
+      
+      //socket receive messages
+      socket.on('broadcastState', (statey) => {
+        console.log(statey);
+        isPlaying = statey;
+        if (isPlaying) {
+           document.querySelector(".buttonText").innerHTML = "stop";
+        }
+        else {
+           document.querySelector(".buttonText").innerHTML = "start";
+        }
+      });
+      
+      //synth parameters from server
+      socket.on('synthParams', (params) => {
+        root.value = params.root;
+        deviation.value = params.deviation;
+        degree.value = params.degree;
+        noteLength.value = params.noteLength;
+        attack.value = params.value;
+        release.value = params.release;
+        mix.value = params.mix;
       });
 
       socket.on('disconnected', (lefty) => {
@@ -47,71 +70,24 @@
         }  
       });
 
-      let pitchset1 = ["D1", "D2", "D2", "F1", "D0", "C2", "C4", "C3"];
-      let pitchset2 = ["A3", "E2", "D#4", "A5"];
-
-      let pitchset3 = ["D1", "C2", "C#2", "F3", "G1", "G#2", "C#2", "F3"];
-      let pitchset4 = ["B3", "D2", "D4", "A5"];
-      
-
       socket.on('time', (time) => {
         timey = document.getElementById('time-point');
-        timey.innerHTML = 'synchronized timepoint ' + time + '/100';
-        if (isPlaying) {
-          let beat = time % 4;
-          console.log(beat);
-          if (beat == 0 && Math.random() > .3) {
-            if (time > 60 ) {
-              console.log('i triggered');
-            synth.triggerAttackRelease(pitchset3[getRandomInt(pitchset3.length)], "8n")
-            }
-            else {
-              console.log('i triggered');
-              synth.triggerAttackRelease(pitchset1[getRandomInt(pitchset1.length)], "8n")
-            }
-            
-          }
-          if (beat == 1 && Math.random() > .7) {
-            if (time > 60) {
-              console.log('i triggered');
-            synth.triggerAttackRelease(pitchset4[getRandomInt(pitchset4.length)], "8n")
-            }
-            else {
-              console.log('i triggered');
-            synth.triggerAttackRelease(pitchset2[getRandomInt(pitchset2.length)], "8n")
-            }
-            
-          }
-          if (beat == 2 && Math.random() > .5) {
-            console.log('i triggered');
-            synth.triggerAttackRelease(pitchset1[getRandomInt(pitchset1.length)], "8n")
-          }
-          if (beat == 3 && Math.random() > .7) {
-            console.log('i triggered');
-            synth.triggerAttackRelease(pitchset2[getRandomInt(pitchset2.length)], "8n")
-          }
-        }
+        timey.innerHTML = 'synchronized timepoint ' + time + ' / 120'; 
       });
 
       function start(){
-        //socket.emit("controller", "gesture");
-        //videoEl.muted = false;
-        Tone.start();
-        
         if (!isPlaying) {
           isPlaying = true;
           context.resume();
           document.querySelector(".buttonText").innerHTML = "stop";
-          
+          socket.emit('isPlaying', isPlaying);
         }
         else {
           isPlaying = false;
           context.suspend();
           document.querySelector(".buttonText").innerHTML = "start";
-          //Tone.pause();
-        }
-        //player.start();
-        
+          socket.emit('isPlaying', isPlaying);
+        }        
       }
 
       function stop(){
@@ -121,87 +97,33 @@
       async function setup() {
           const WAContext = window.AudioContext || window.webkitAudioContext;
           context = new WAContext();
-          Tone.context = context;
           // Create gain node
           const outputNode = context.createGain();
-          
           // Fetch the exported patchers
-          let response = await fetch("rnbo.filterdelay.json");
-          const delayPatcher = await response.json();
-          response = await fetch("rnbo.platereverb.json");
+          let response = await fetch("patch.export.json");
+          const mainPatcher = await response.json();
+          response = await fetch("rnbo.shimmerev.json");
           const reverbPatcher = await response.json();
           // Create the devices
-          const delayDevice = await createDevice({ context, patcher: delayPatcher });
-          const reverbDevice = await createDevice({ context, patcher: reverbPatcher });/*
-          const samples = new Tone.ToneAudioBuffers({
-            0 : "sounds/root/sample_0.mp3",
-            1 : "sounds/gtr/cluster_1/sample_1.mp3",
-            2 : "sounds/gtr/cluster_1/sample_2.mp3",
-            3 : "sounds/gtr/cluster_1/sample_3.mp3",
-            4 : "sounds/gtr/cluster_1/sample_4.mp3",
-            5 : "sounds/gtr/cluster_1/sample_5.mp3",
-            6 : "sounds/gtr/cluster_1/sample_6.mp3",
-            7 : "sounds/gtr/cluster_1/sample_7.mp3",
-            8 : "sounds/gtr/cluster_1/sample_8.mp3",
-            9 : "sounds/gtr/cluster_1/sample_9.mp3",
-            10 : "sounds/gtr/cluster_1/sample_10.mp3",
-            11 : "sounds/gtr/cluster_1/sample_11.mp3",
-            12 : "sounds/gtr/cluster_1/sample_12.mp3",
-            13 : "sounds/gtr/cluster_1/sample_13.mp3",
-            14 : "sounds/gtr/cluster_1/sample_14.mp3",
-            15 : "sounds/gtr/cluster_1/sample_15.mp3",
-            16 : "sounds/gtr/cluster_1/sample_16.mp3",
-            17 : "sounds/gtr/cluster_1/sample_17.mp3",
-            18 : "sounds/gtr/cluster_1/sample_18.mp3",
-            19 : "sounds/gtr/cluster_1/sample_19.mp3",
-            20 : "sounds/gtr/cluster_1/sample_20.mp3",
-            21 : "sounds/gtr/cluster_1/sample_21.mp3",
-            22 : "sounds/gtr/cluster_1/sample_22.mp3",
-            23 : "sounds/gtr/cluster_1/sample_23.mp3",
-            24 : "sounds/gtr/cluster_1/sample_24.mp3",
-            25 : "sounds/gtr/cluster_1/sample_25.mp3",
-            26 : "sounds/gtr/cluster_1/sample_26.mp3",
-            27 : "sounds/gtr/cluster_2/sample_1.mp3",
-            28 : "sounds/gtr/cluster_2/sample_2.mp3",
-            29 : "sounds/gtr/cluster_2/sample_3.mp3",
-            30 : "sounds/gtr/cluster_2/sample_4.mp3",
-            31 : "sounds/gtr/cluster_2/sample_5.mp3",
-            32 : "sounds/gtr/cluster_2/sample_6.mp3",
-            33 : "sounds/gtr/cluster_2/sample_7.mp3",
-            34 : "sounds/gtr/cluster_2/sample_8.mp3",
-            35 : "sounds/gtr/cluster_2/sample_9.mp3",
-            36 : "sounds/gtr/cluster_2/sample_10.mp3",
-            37 : "sounds/gtr/cluster_2/sample_11.mp3",
-            38 : "sounds/gtr/cluster_2/sample_12.mp3",
-            39 : "sounds/gtr/cluster_2/sample_13.mp3",
-            40 : "sounds/gtr/cluster_2/sample_14.mp3",
-            41 : "sounds/gtr/cluster_2/sample_15.mp3",
-            42 : "sounds/gtr/cluster_2/sample_16.mp3",
-            43 : "sounds/gtr/cluster_2/sample_17.mp3",
-            44 : "sounds/gtr/cluster_2/sample_18.mp3",
-            45 : "sounds/gtr/cluster_2/sample_19.mp3",
-            46 : "sounds/gtr/cluster_2/sample_20.mp3",
-            47 : "sounds/gtr/cluster_2/sample_0.mp3",
-          }, () => {
-            document.querySelector(".buttonText").innerHTML = "start";
-          });
-          */
-          //player = new Tone.Player("https://tonejs.github.io/audio/berklee/gong_1.mp3").toDestination();
-          synth = new Tone.Synth().toDestination();
-          
-          //const source = context.createMediaElementSource(videoEl);
-          // Connect the devices in series
-          //player.connect(outputNode);
-          //outputNode.connect(context.destination);
-          //Tone.connect(delayDevice.node, reverbDevice.node)
-          //Tone.connect(reverbDevice.node, outputNode)
-          //Tone.connect(outputNode, context.destination);
-          //delayDevice.node.connect(reverbDevice.node);
-          //reverbDevice.node.connect(outputNode);
-          //outputNode.connect(context.destination);
+          const synthDevice = await createDevice({ context, patcher: mainPatcher });
+          const reverbDevice = await createDevice({ context, patcher: reverbPatcher });
+          //get params
+          root = synthDevice.parametersById.get("root");
+          degree = synthDevice.parametersById.get('degree');
+          deviation = synthDevice.parametersById.get('deviation');
+          noteLength = synthDevice.parametersById.get('noteLength');
+          attack = synthDevice.parametersById.get('attack');
+          release = synthDevice.parametersById.get('release');
+          mix = reverbDevice.parametersById.get('mix');
+          mix.value = 0;
+          synthDevice.node.connect(reverbDevice.node);
+          reverbDevice.node.connect(outputNode);
+          outputNode.connect(context.destination);
+          context.suspend();
       }
 
       setup();
+      
     </script>
   </head>
   <body>
@@ -215,7 +137,7 @@
         <p>2) visit the Sixty Point Sync URL</p>
         <p>3) press start at around the same time</p>
         <p class = "buttonText" onclick="start()">start</button></p>
-        <p id="time-point">synchronized timepoint ??/100</p>
+        <p id="time-point">synchronized timepoint 000 /100</p>
         <p id="user-state">you are the only person here, send someone the link to join the piece...</p>
         <p id="numUsers"></p>  
     </div>       
