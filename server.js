@@ -70,7 +70,8 @@ function timeKeeper() {
           //"deviation" : Math.random() * 20 - 10,
           //"noteLength": 10,
           //"attack": 10,
-          //"release": 1,
+          "rate": Math.random() * 0.5 + 1.0,
+          "delayTime": (Math.random() * 0.2) + .1,
           "mix": Math.random(),
           "sample" : getRandomInt(15)
         };
@@ -80,13 +81,13 @@ function timeKeeper() {
           //"deviation" : Math.random() * 20 - 10,
           //"noteLength": 10,
           //"attack": 10,
-          //"release": 1,
+          "delayTime": (Math.random() * 0.2) + .1,
           "mix": Math.random(),
           "sample" : getRandomInt(15)
         };
-        console.log(params);
+        //console.log(params);
         io.to(participant[part]).emit('synthParams', params);
-        io.to(participant[part2]).emit('synthParams', params);
+        //io.to(participant[part2]).emit('synthParams', params);
       }
       if (time > 35 && time < 65) {
         let part = getRandomInt(participant.length);
