@@ -3,6 +3,7 @@
     <link rel="stylesheet" type="text/css" href="/style.css">
     <script type="text/javascript" src="https://cdn.cycling74.com/rnbo/latest/rnbo.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="Tone.js"></script>
     <script>
       const { createDevice } = RNBO;
       let context;
@@ -12,17 +13,52 @@
       let now;
       let socket = io();
       let isPlaying = false;
+      //synthparams
       let degree;
       let deviation;
       let noteLength;
       let attack;
       let release;
       let mix;
+      //voice allocater
+      harmPlayerCount = 0; 
+      notePlayerCount = 0;
+      let reverbs = [];
+      let delays = [];
       // helper functions
       function getRandomInt(max) {
         return Math.floor(Math.random() * max);
       }
       
+      const vol = new Tone.Volume(-12).toDestination();
+          const samples = new Tone.ToneAudioBuffers({
+            0 : "sounds/harms/harm1.wav",
+            1 : "sounds/harms/harm2.wav",
+            2 : "sounds/harms/harm3.wav",
+            3 : "sounds/harms/harm4.wav",
+            4 : "sounds/harms/harm5.wav",
+            5 : "sounds/harms/harm6.wav",
+            6 : "sounds/harms/harm7.wav",
+            7 : "sounds/harms/harm8.wav",
+            8 : "sounds/harms/harm9.wav",
+            9 : "sounds/harms/harm10.wav",
+            10 : "sounds/harms/harm11.wav",
+            11 : "sounds/harms/harm12.wav",
+            12 : "sounds/harms/harm13.wav",
+            13 : "sounds/harms/harm14.wav",
+            14 : "sounds/harms/harm15.wav",
+            15 : "sounds/harms/harm16.wav"
+          }, () => {
+            
+            harmPlayers = [];
+            leadPlayers = [];
+            for (let x = 0; x < 15; x++) {
+              reverbs.push(new Tone.Reverb({decay: 9, wet: .6}).connect(vol));
+              delays.push(new Tone.FeedbackDelay(.250, 0.6).connect(reverbs[x]));
+              harmPlayers.push(new Tone.Player().connect(delays[x]));
+            }
+            document.querySelector(".button").innerHTML = "play";
+          });
       const min = 0;
       const max = window.innerWidth - 420;
       
@@ -33,32 +69,44 @@
         console.log(statey);
         isPlaying = statey;
         if (isPlaying) {
-           document.querySelector(".buttonText").innerHTML = "stop";
+           document.querySelector(".buttonText").innerHTML = "mute";
         }
         else {
-           document.querySelector(".buttonText").innerHTML = "start";
+           document.querySelector(".buttonText").innerHTML = "listen";
         }
       });
       
       //synth parameters from server
       socket.on('synthParams', (params) => {
+        /*
         root.value = params.root;
         deviation.value = params.deviation;
         degree.value = params.degree;
         noteLength.value = params.noteLength;
         attack.value = params.value;
         release.value = params.release;
-        mix.value = params.mix;
+        
+        */
+        harmPlayerCount++;
+        if (harmPlayerCount >= harmPlayers.length) {
+          harmPlayerCount = 0;
+        
+        }
+        console.log(harmPlayerCount);
+        reverbs[harmPlayerCount].wet.value = params.mix;
+        harmPlayers[harmPlayerCount].buffer = samples.get(params.sample);
+        harmPlayers[harmPlayerCount].volume.value = -8;
+        harmPlayers[harmPlayerCount].start();
       });
 
       socket.on('disconnected', (lefty) => {
-        el = document.getElementById('user-state');
+        el = document.querySelector('.user-state');
         el.innerHTML = lefty;
       });
 
       socket.on('connecty', (joiny) => {
         el = document.getElementById('user-state');
-        el.innerHTML = joiny + new Date().toTimeString();
+        el.innerHTML = joiny;
       });
 
       socket.on('numUsers', (joiny) => {
@@ -78,70 +126,58 @@
       function start(){
         if (!isPlaying) {
           isPlaying = true;
-          context.resume();
-          document.querySelector(".buttonText").innerHTML = "stop";
+          //context.resume();
+          Tone.start();
+          document.querySelector(".buttonText").innerHTML = "mute";
           socket.emit('isPlaying', isPlaying);
         }
         else {
           isPlaying = false;
           //context.suspend();
-          document.querySelector(".buttonText").innerHTML = "start";
+          document.querySelector(".buttonText").innerHTML = "listen";
           socket.emit('isPlaying', isPlaying);
         }        
       }
 
       function stop(){
-        context.suspend();
+        //context.suspend();
       }
 
-      async function setup() {
-          const WAContext = window.AudioContext || window.webkitAudioContext;
-          context = new WAContext();
-          // Create gain node
-          const outputNode = context.createGain();
-          // Fetch the exported patchers
-          let response = await fetch("patch.export.json");
-          const mainPatcher = await response.json();
-          response = await fetch("rnbo.shimmerev.json");
-          const reverbPatcher = await response.json();
-          // Create the devices
-          const synthDevice = await createDevice({ context, patcher: mainPatcher });
-          const reverbDevice = await createDevice({ context, patcher: reverbPatcher });
-          //get params
-          root = synthDevice.parametersById.get("root");
-          degree = synthDevice.parametersById.get('degree');
-          deviation = synthDevice.parametersById.get('deviation');
-          noteLength = synthDevice.parametersById.get('noteLength');
-          attack = synthDevice.parametersById.get('attack');
-          release = synthDevice.parametersById.get('release');
-          mix = reverbDevice.parametersById.get('mix');
-          mix.value = 0;
-          synthDevice.node.connect(reverbDevice.node);
-          reverbDevice.node.connect(outputNode);
-          outputNode.connect(context.destination);
-          context.suspend();
-      }
-
-      setup();
+  
       
     </script>
   </head>
   <body>
     <div class="main">
-        <h1>Sixty Point Sync</h1>
-        <h2>Tommy (2023)</h2>
-        <p>an electronically linked composition for two or more local web browsers</p>
         <br>
-        <p style="color:red">instructions</p>
-        <p>1) in the same room, stand apart from each other</p>
-        <p>2) visit the Sixty Point Sync URL</p>
-        <p>3) press start at around the same time</p>
-        <p style="color:red">control</p>
-        <p>4) you may stop or start the piece for everyone in the group</p>
-        <p class = "buttonText" onclick="start()">start</button></p>
+        <img src="images/guitarEcho.jpg">
+        <br> 
+        <br>
+        <h1>Tommy: Mesh of Echoes</h1>
+        <p>a distributed guitar and web piece</p>
+        <br> 
+        <input type="range" min="0.0" max="1.0" step=".01" width="400px">
         <p id="time-point">synchronized timepoint 000 /100</p>
-        <p id="user-state">you are the only person here, send someone the link to join the piece...</p>
-        <p id="numUsers"></p>  
+        <br>
+        <p class = "buttonText" onclick="start()">listen</button></p>
+        <br>
+        <input type="range" min="0.0" max="1.0" step=".01">
+        <br>
+        <br> 
+        <p><span style="color:chartreuse">network state:</span> <span class="user-state">you are the only person here, send someone the link to join the piece...</span></p>
+        <br>
+        <details>
+          <summary>more info</summary>
+          <p style="color:deepskyblue">instructions</p>
+          <p>1. in the same room, stand apart from each other.</p>
+          <p>2. press 'listen.'</p>
+          <p>3. use the echo slider to change the delay effect.</p>
+          <br>
+          <p>2023</p>
+          <p>photo by Donna Allen</p>
+        </details>
+        
+        
     </div>       
   </body>
 </html>

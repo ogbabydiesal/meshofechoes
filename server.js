@@ -7,7 +7,9 @@ let users = 0;
 let active = false;
 let time = 0;
 let participant = [];
+//D4 and D5
 let roots = [293.665, 587.33];
+
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, '/index.html'));
 });
@@ -28,7 +30,7 @@ io.on('connection', (socket) => {
   users +=1;
   participant.push(socket.id);
   console.log(participant);
-  io.emit('connecty', 'a new user joined at ');
+  io.emit('connecty', 'a new user joined');
   io.emit('numUsers', users);
   console.log('Client connected');
   socket.on("isPlaying", (isPlaying) => {
@@ -61,16 +63,30 @@ function timeKeeper() {
       
       if (time > 2 && time < 30) {
         let part = getRandomInt(participant.length);
+        let part2 = getRandomInt(participant.length);
         let params = { 
-          "root" : roots[getRandomInt(roots.length)],
-          "degree" : getRandomInt(20),
-          "deviation" : Math.random() * 20 - 10,
-          "noteLength": 10,
-          "attack": 10,
-          "release": 1,
-          "mix": Math.random() * 20
+          //"root" : roots[getRandomInt(roots.length)],
+          //"degree" : getRandomInt(20),
+          //"deviation" : Math.random() * 20 - 10,
+          //"noteLength": 10,
+          //"attack": 10,
+          //"release": 1,
+          "mix": Math.random(),
+          "sample" : getRandomInt(15)
         };
+        let params2 = { 
+          //"root" : roots[getRandomInt(roots.length)],
+          //"degree" : getRandomInt(20),
+          //"deviation" : Math.random() * 20 - 10,
+          //"noteLength": 10,
+          //"attack": 10,
+          //"release": 1,
+          "mix": Math.random(),
+          "sample" : getRandomInt(15)
+        };
+        console.log(params);
         io.to(participant[part]).emit('synthParams', params);
+        io.to(participant[part2]).emit('synthParams', params);
       }
       if (time > 35 && time < 65) {
         let part = getRandomInt(participant.length);
