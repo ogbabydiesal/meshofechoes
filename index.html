@@ -1,11 +1,26 @@
 <html>
   <head>
+    <title>Mesh of Echoes</title>
+    <meta charset = "utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.8">
+    <meta property="og:title" content="Mesh of Echoes"/>
+    <meta property="og:type" content="website"/>
+    <meta property="author" content="Tommy"/>
+    <meta property="description" content="a distributive composition by tommy"/>
     <link rel="stylesheet" type="text/css" href="/style.css">
     <script type="text/javascript" src="https://cdn.cycling74.com/rnbo/latest/rnbo.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="Tone.js"></script>
     <script>
-      const { createDevice } = RNBO;
+      //write a function to take the slider input and change the feedback delay feedback param
+      let feedback = 0.5;
+      window.addEventListener('load', () => {
+        const slider = document.querySelector('input');
+        slider.addEventListener('input', (e) => {
+          feedback = e.target.value;
+        });
+      });
+      //const { createDevice } = RNBO;
       let context;
       let joiny = 0;
       let player;
@@ -90,9 +105,10 @@
         harmPlayerCount++;
         if (harmPlayerCount >= harmPlayers.length) {
           harmPlayerCount = 0;
-        
         }
-        console.log(harmPlayerCount);
+        delays[harmPlayerCount].feedback.value = feedback;
+        delays[harmPlayerCount].delayTime.value = params.delayTime;
+        //harmPlayers[harmPlayerCount].playbackRate = params.rate;
         reverbs[harmPlayerCount].wet.value = params.mix;
         harmPlayers[harmPlayerCount].buffer = samples.get(params.sample);
         harmPlayers[harmPlayerCount].volume.value = -8;
@@ -106,21 +122,21 @@
 
       socket.on('connecty', (joiny) => {
         el = document.getElementById('user-state');
-        el.innerHTML = joiny;
+        //el.innerHTML = joiny;
       });
 
       socket.on('numUsers', (joiny) => {
-        el = document.getElementById('numUsers');
+        //el = document.getElementById('numUsers');
         if (joiny > 1) {
-          el.innerHTML = 'there are ' + joiny + ' users online';
+          //el.innerHTML = 'there are ' + joiny + ' users online';
         } else {
-          el.innerHTML = 'you are the only person here, send someone the link to join the party...';
+          //el.innerHTML = 'you are the only person here, send someone the link to join the party...';
         }  
       });
 
       socket.on('time', (time) => {
         timey = document.getElementById('time-point');
-        timey.innerHTML = 'synchronized timepoint ' + time + ' / 120'; 
+        timey.innerHTML = 'cloud sync ' + time + ' / 120'; 
       });
 
       function start(){
@@ -156,12 +172,11 @@
         <h1>Tommy: Mesh of Echoes</h1>
         <p>a distributed guitar and web piece</p>
         <br> 
-        <input type="range" min="0.0" max="1.0" step=".01" width="400px">
-        <p id="time-point">synchronized timepoint 000 /100</p>
+        <p id="time-point">cloud sync 000 /100</p>
         <br>
         <p class = "buttonText" onclick="start()">listen</button></p>
         <br>
-        <input type="range" min="0.0" max="1.0" step=".01">
+        <input type="range" min="0.0" max="0.7" step=".01">
         <br>
         <br> 
         <p><span style="color:chartreuse">network state:</span> <span class="user-state">you are the only person here, send someone the link to join the piece...</span></p>
