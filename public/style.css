@@ -50,8 +50,6 @@ input[type="range"]::-webkit-slider-thumb {
 
   img {
     width:400px;
-    border-radius: 5px;
-    
   }
   .buttonText {
     font-size: 15px;

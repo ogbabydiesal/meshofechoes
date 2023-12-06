@@ -7,8 +7,6 @@ let users = 0;
 let active = false;
 let time = 0;
 let participant = [];
-//D4 and D5
-let roots = [293.665, 587.33];
 
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, '/index.html'));
@@ -43,26 +41,19 @@ io.on('connection', (socket) => {
     io.emit('numUsers', users)
     const index = participant.indexOf(socket.id);
     participant.splice(index, 1);
-    console.log(participant);
-    if (participant.length < 1) {
-      active = false;
-      time = 0;
-    }
   });
 });
 let ticks = 0;
 function timeKeeper() {
   setTimeout(() => {
-    
     ticks +=1;
     io.emit('time', time);
-    //io.to(participant[getRandomInt(participant.length)]).emit('note', getRandomInt(20));
     if (ticks % 16 == 0) {
       time += 1;
     }
-    if (time > 2 && time < 22) {
+    //intro plucks
+    if (time > 1 && time < 22 && ticks % 2 == 0) {
       let part = getRandomInt(participant.length);
-      let part2 = getRandomInt(participant.length);
       let params = { 
         "rate": 1,
         "delayTime": (Math.random() * 0.2) + .1,
@@ -70,46 +61,83 @@ function timeKeeper() {
         "sample" : getRandomInt(15)
       };
       io.to(participant[part]).emit('pluckParams', params);
-      //io.to(participant[part2]).emit('synthParams', params);
     }
-
-    //overlap with plucks
-    if (time > 10 && time < 45 && ticks % 32 == 0) {
+    //plucks get more sparce
+    if (time > 22 && time < 32 && ticks % 4 == 0 && Math.random() > 0.5) {
       let part = getRandomInt(participant.length);
-      let part2 = getRandomInt(participant.length);
+      let params = { 
+        "rate": 1,
+        "delayTime": (Math.random() * 0.2) + .01,
+        "mix": Math.random(),
+        "sample" : getRandomInt(15)
+      };
+      io.to(participant[part]).emit('pluckParams', params);
+    }
+    //bows overlap with plucks
+    if (time > 10 && time < 45 && ticks % 28 == 0) {
+      let part = getRandomInt(participant.length);
       let params = { 
         "rate": 1,
         "delayTime": (Math.random() * 0.2) + .1,
         "mix": Math.random(),
         "sample" : getRandomInt(28) + 15
       };
-      
-      console.log(params);
       io.to(participant[part]).emit('bowParams', params);
-      //io.to(participant[part2]).emit('synthParams', params);
     }
-
-
-    if (time > 35 && time < 65) {
+    //plucks return and change pitch
+    if (time > 45 && time < 85 && ticks % 4 == 0 && Math.random() > 0.2) {
       let part = getRandomInt(participant.length);
-      if (ticks % 16 == 0 && Math.random() > 0.33) {
-        
-        //io.to(participant[part]).emit('synthParams', params);
+      let params = { 
+        "rate": 1 + (Math.random() * 0.4) - 0.2,
+        "delayTime": (Math.random() * 0.2) + .1,
+        "mix": Math.random(),
+        "sample" : getRandomInt(15)
+      };
+      io.to(participant[part]).emit('pluckParams', params);
+    }
+    //bows overlap with other bows but change pitch more
+    if (time > 40 && time < 85 && ticks % 28 == 0) {
+      let part = getRandomInt(participant.length);
+      let params = { 
+        "rate": 0.9 + (Math.random() * 0.5),
+        "delayTime": (Math.random() * 0.2) + .1,
+        "mix": Math.random(),
+        "sample" : getRandomInt(28) + 15
+      }; 
+      io.to(participant[part]).emit('bowParams', params);
+    }
+    if (time > 40 && time < 80 && ticks % 28 == 0) {
+      let part = getRandomInt(participant.length);
+      let params = { 
+        "rate": 0.9 + (Math.random() * 0.5),
+        "delayTime": (Math.random() * 0.2) + .1,
+        "mix": Math.random(),
+        "sample" : getRandomInt(28) + 15
+      }; 
+      io.to(participant[part]).emit('bowParams', params);
+    }
+    //more plucks during the end part
+    if (time > 80 && time < 108 && ticks % 2 == 0 && Math.random() > 0.1) {
+      let params = {
+        "rate": 1,
+        "delayTime": (Math.random() * 0.2) + .1,
+        "mix": Math.random(),
+        "sample" : getRandomInt(15)
+      };
+      for (let i = 0; i < participant.length; i++) {
+        io.to(participant[i]).emit('pluckParams', params);
       }
     }
-    if (time > 72 && time < 92) {
-      let part = getRandomInt(participant.length);
-      if (ticks % 16 == 0 && Math.random() > 0.33 || ticks % 2 == 0 && Math.random() > 0.33) {
-        
-        //io.to(participant[part]).emit('synthParams', params);
-      }
-    }
-    if (time > 92 && time < 110) {
-      let part = getRandomInt(participant.length);
-      if (ticks % 16 == 0 && Math.random() > 0.33 || ticks % 2 == 0 && Math.random() > 0.33 || ticks % 1 == 0 && Math.random() > 0.55) {
-        
-        //io.to(participant[part]).emit('synthParams', params);
-      }
+    if (time == 81 && ticks % 16 == 0) {
+      let params = {
+        "rate": 1,
+        "delayTime": (Math.random() * 0.2) + .1,
+        "mix": Math.random(),
+        "sample" : 45
+      };
+      for (let i = 0; i < participant.length; i++) {
+        io.to(participant[i]).emit('bowParams', params);
+      }      
     }
     if (time == 120) {
       time = 0;

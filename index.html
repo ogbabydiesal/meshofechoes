@@ -98,6 +98,7 @@
         42 : "sounds/bows/bow27.mp3",
         43 : "sounds/bows/bow28.mp3",
         44 : "sounds/bows/bow29.mp3",
+        45 : "sounds/bows/ending.mp3"
       }, () => {
         silentPlayer.loop = true;
         for (let x = 0; x < 15; x++) {
@@ -105,11 +106,10 @@
           delays.push(new Tone.FeedbackDelay(.250, 0.6).connect(reverbs[x]));
           harmPlayers.push(new Tone.Player().connect(delays[x])); 
         }
-        console.log(delays);
         bowReverb = new Tone.Reverb({decay: 9, wet: .6}).connect(vol);
         bowDelay = new Tone.FeedbackDelay(.250, 0.6).connect(bowReverb);
         silentPlayer.connect(bowReverb);
-        for (let x = 0; x < 4; x++) {
+        for (let x = 0; x < 8; x++) {
           bowPlayers.push(new Tone.Player().connect(bowDelay));
         }
         document.querySelector(".button").innerHTML = "play";
@@ -121,7 +121,6 @@
       
       //socket receive messages
       socket.on('broadcastState', (statey) => {
-        console.log(statey);
         isPlaying = statey;
         if (isPlaying) {
            document.querySelector(".buttonText").innerHTML = "mute";
@@ -142,7 +141,7 @@
         harmPlayers[harmPlayerCount].playbackRate = params.rate;
         reverbs[harmPlayerCount].wet.value = params.mix;
         harmPlayers[harmPlayerCount].buffer = samples.get(params.sample);
-        harmPlayers[harmPlayerCount].volume.value = -8;
+        harmPlayers[harmPlayerCount].volume.value = -2;
         harmPlayers[harmPlayerCount].start();
       });
 
@@ -152,11 +151,11 @@
           bowPlayerCount = 0;
         }
         bowDelay.feedback.value = feedback;
-        bowDelay.delayTime.value = params.delayTime;
-        //harmPlayers[harmPlayerCount].playbackRate = params.rate;
-        bowReverb.wet.value = params.mix;
+        //bowDelay.delayTime.value = params.delayTime;
+        harmPlayers[harmPlayerCount].playbackRate = params.rate;
+        //bowReverb.wet.value = params.mix;
         bowPlayers[bowPlayerCount].buffer = samples.get(params.sample);
-        bowPlayers[bowPlayerCount].volume.value = -4;
+        
         bowPlayers[bowPlayerCount].start();
       });
 
@@ -219,6 +218,7 @@
         <br>
         <p class = "buttonText" onclick="start()">listen</button></p>
         <br>
+        <p>echoes</p>
         <input type="range" min="0.0" max="0.9" step=".01">
         <br>
         <br> 
