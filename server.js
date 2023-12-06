@@ -53,90 +53,66 @@ io.on('connection', (socket) => {
 let ticks = 0;
 function timeKeeper() {
   setTimeout(() => {
-    if (active) {
-      ticks +=1;
-      io.emit('time', time);
-      //io.to(participant[getRandomInt(participant.length)]).emit('note', getRandomInt(20));
-      if (ticks % 16 == 0) {
-        time += 1;
-      }
+    
+    ticks +=1;
+    io.emit('time', time);
+    //io.to(participant[getRandomInt(participant.length)]).emit('note', getRandomInt(20));
+    if (ticks % 16 == 0) {
+      time += 1;
+    }
+    if (time > 2 && time < 22) {
+      let part = getRandomInt(participant.length);
+      let part2 = getRandomInt(participant.length);
+      let params = { 
+        "rate": 1,
+        "delayTime": (Math.random() * 0.2) + .1,
+        "mix": Math.random(),
+        "sample" : getRandomInt(15)
+      };
+      io.to(participant[part]).emit('pluckParams', params);
+      //io.to(participant[part2]).emit('synthParams', params);
+    }
+
+    //overlap with plucks
+    if (time > 10 && time < 45 && ticks % 32 == 0) {
+      let part = getRandomInt(participant.length);
+      let part2 = getRandomInt(participant.length);
+      let params = { 
+        "rate": 1,
+        "delayTime": (Math.random() * 0.2) + .1,
+        "mix": Math.random(),
+        "sample" : getRandomInt(28) + 15
+      };
       
-      if (time > 2 && time < 30) {
-        let part = getRandomInt(participant.length);
-        let part2 = getRandomInt(participant.length);
-        let params = { 
-          //"root" : roots[getRandomInt(roots.length)],
-          //"degree" : getRandomInt(20),
-          //"deviation" : Math.random() * 20 - 10,
-          //"noteLength": 10,
-          //"attack": 10,
-          "rate": Math.random() * 0.5 + 1.0,
-          "delayTime": (Math.random() * 0.2) + .1,
-          "mix": Math.random(),
-          "sample" : getRandomInt(15)
-        };
-        let params2 = { 
-          //"root" : roots[getRandomInt(roots.length)],
-          //"degree" : getRandomInt(20),
-          //"deviation" : Math.random() * 20 - 10,
-          //"noteLength": 10,
-          //"attack": 10,
-          "delayTime": (Math.random() * 0.2) + .1,
-          "mix": Math.random(),
-          "sample" : getRandomInt(15)
-        };
-        //console.log(params);
-        io.to(participant[part]).emit('synthParams', params);
-        //io.to(participant[part2]).emit('synthParams', params);
+      console.log(params);
+      io.to(participant[part]).emit('bowParams', params);
+      //io.to(participant[part2]).emit('synthParams', params);
+    }
+
+
+    if (time > 35 && time < 65) {
+      let part = getRandomInt(participant.length);
+      if (ticks % 16 == 0 && Math.random() > 0.33) {
+        
+        //io.to(participant[part]).emit('synthParams', params);
       }
-      if (time > 35 && time < 65) {
-        let part = getRandomInt(participant.length);
-        if (ticks % 16 == 0 && Math.random() > 0.33) {
-          let params = { 
-            "root" : roots[0],
-            "degree" : getRandomInt(20),
-            "deviation" : Math.random() * 2 - 1,
-            "noteLength": 6000,
-            "attack": 1000,
-            "release": 1000,
-            "mix": Math.random() * 20 + 15
-          };
-          io.to(participant[part]).emit('synthParams', params);
-        }
+    }
+    if (time > 72 && time < 92) {
+      let part = getRandomInt(participant.length);
+      if (ticks % 16 == 0 && Math.random() > 0.33 || ticks % 2 == 0 && Math.random() > 0.33) {
+        
+        //io.to(participant[part]).emit('synthParams', params);
       }
-      if (time > 72 && time < 92) {
-        let part = getRandomInt(participant.length);
-        if (ticks % 16 == 0 && Math.random() > 0.33 || ticks % 2 == 0 && Math.random() > 0.33) {
-          let params = { 
-            "root" : roots[getRandomInt(roots.length)],
-            "degree" : getRandomInt(20),
-            "deviation" : Math.random() * 4 - 2,
-            "noteLength": Math.random() * 1000 + 10,
-            "attack": Math.random() * 1000 + 10,
-            "release": Math.random() * 1000 + 10,
-            "mix": Math.random() * 20
-          };
-          io.to(participant[part]).emit('synthParams', params);
-        }
+    }
+    if (time > 92 && time < 110) {
+      let part = getRandomInt(participant.length);
+      if (ticks % 16 == 0 && Math.random() > 0.33 || ticks % 2 == 0 && Math.random() > 0.33 || ticks % 1 == 0 && Math.random() > 0.55) {
+        
+        //io.to(participant[part]).emit('synthParams', params);
       }
-      if (time > 92 && time < 110) {
-        let part = getRandomInt(participant.length);
-        if (ticks % 16 == 0 && Math.random() > 0.33 || ticks % 2 == 0 && Math.random() > 0.33 || ticks % 1 == 0 && Math.random() > 0.55) {
-          let params = { 
-            "root" : roots[getRandomInt(roots.length)],
-            "degree" : getRandomInt(20),
-            "deviation" : Math.random() * 4 - 2,
-            "noteLength": Math.random() * 1000 + 10,
-            "attack": Math.random() * 1000 + 10,
-            "release": Math.random() * 1000 + 10,
-            "mix": Math.random() * 20
-          };
-          io.to(participant[part]).emit('synthParams', params);
-        }
-      }
-      if (time == 120) {
-        time = 0;
-      }
+    }
+    if (time == 120) {
+      time = 0;
     }
     timeKeeper();
   }, "75"); 
