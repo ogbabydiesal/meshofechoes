@@ -51,7 +51,6 @@
       }
       const silentPlayer = new Tone.Player("sounds/silence.m4a");
       const vol = new Tone.Volume(-12).toDestination();
-      console.log('hello');
       const samples = new Tone.ToneAudioBuffers({
         0 : "sounds/harms/harm1.wav",
         1 : "sounds/harms/harm2.wav",
@@ -123,10 +122,10 @@
       socket.on('broadcastState', (statey) => {
         isPlaying = statey;
         if (isPlaying) {
-           document.querySelector(".buttonText").innerHTML = "mute";
+           //document.querySelector(".buttonText").innerHTML = "mute";
         }
         else {
-           document.querySelector(".buttonText").innerHTML = "listen";
+           //document.querySelector(".buttonText").innerHTML = "listen";
         }
       });
       
@@ -233,9 +232,7 @@
           <br>
           <p>2023</p>
           <p>photo by Donna Allen</p>
-        </details>
-        
-        
+        </details> 
     </div>       
   </body>
 </html>

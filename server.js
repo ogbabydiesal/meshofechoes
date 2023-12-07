@@ -33,7 +33,7 @@ io.on('connection', (socket) => {
   console.log('Client connected');
   socket.on("isPlaying", (isPlaying) => {
     active = isPlaying;
-    io.emit('broadcastState', isPlaying);
+    //io.emit('broadcastState', isPlaying);
   });
   socket.on('disconnect', () => {
     users -=1;
@@ -143,7 +143,7 @@ function timeKeeper() {
       time = 0;
     }
     timeKeeper();
-  }, "75"); 
+  }, "62.5"); 
 }
 
 timeKeeper();
