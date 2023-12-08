@@ -50,7 +50,7 @@
         return Math.floor(Math.random() * max);
       }
       const silentPlayer = new Tone.Player("sounds/silence.m4a");
-      const vol = new Tone.Volume(-12).toDestination();
+      const vol = new Tone.Volume(-70).toDestination();
       const samples = new Tone.ToneAudioBuffers({
         0 : "sounds/harms/harm1.wav",
         1 : "sounds/harms/harm2.wav",
@@ -129,7 +129,7 @@
         }
       });
       
-      //synth parameters from server
+      //pluck parameters from server
       socket.on('pluckParams', (params) => {
         harmPlayerCount++;
         if (harmPlayerCount >= harmPlayers.length) {
@@ -143,7 +143,7 @@
         harmPlayers[harmPlayerCount].volume.value = -2;
         harmPlayers[harmPlayerCount].start();
       });
-
+      //bow parameters from server
       socket.on('bowParams', (params) => {
         bowPlayerCount++;
         if (bowPlayerCount >= bowPlayers.length) {
@@ -169,11 +169,11 @@
       });
 
       socket.on('numUsers', (joiny) => {
-        //el = document.getElementById('numUsers');
+        el = document.querySelector('.user-state');
         if (joiny > 1) {
-          //el.innerHTML = 'there are ' + joiny + ' users online';
+          el.innerHTML = 'there are ' + joiny + ' users online';
         } else {
-          //el.innerHTML = 'you are the only person here, send someone the link to join the party...';
+          el.innerHTML = 'you are the only person here, send someone the link to join the party...';
         }  
       });
 
@@ -190,9 +190,11 @@
           silentPlayer.start();
           document.querySelector(".buttonText").innerHTML = "mute";
           socket.emit('isPlaying', isPlaying);
+          vol.volume.value = -12;
         }
         else {
           isPlaying = false;
+          vol.volume.value = -70;
           //context.suspend();
           document.querySelector(".buttonText").innerHTML = "listen";
           socket.emit('isPlaying', isPlaying);
@@ -217,7 +219,7 @@
         <br>
         <p class = "buttonText" onclick="start()">listen</button></p>
         <br>
-        <p>echoes</p>
+        <p>echoes &#41;&#41;&#41;&#41;&#41;&#41;&#41;&#41;</p>
         <input type="range" min="0.0" max="0.9" step=".01">
         <br>
         <br> 
