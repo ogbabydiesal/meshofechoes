@@ -4,7 +4,6 @@ const path = require('path');
 const app = module.exports.app = express();
 const port = process.env.PORT || 3000;
 let users = 0;
-let active = false;
 let time = 0;
 let participant = [];
 
@@ -33,7 +32,6 @@ io.on('connection', (socket) => {
   console.log('Client connected');
   socket.on("isPlaying", (isPlaying) => {
     active = isPlaying;
-    //io.emit('broadcastState', isPlaying);
   });
   socket.on('disconnect', () => {
     users -=1;
@@ -56,8 +54,8 @@ function timeKeeper() {
       let part = getRandomInt(participant.length);
       let params = { 
         "rate": 1,
-        "delayTime": (Math.random() * 0.2) + .1,
-        "mix": Math.random(),
+        "delayTime": +((Math.random() * 0.3) + 0.1).toFixed(2),
+        "mix": +Math.random().toFixed(2),
         "sample" : getRandomInt(15)
       };
       io.to(participant[part]).emit('pluckParams', params);
