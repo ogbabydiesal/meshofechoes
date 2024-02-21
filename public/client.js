@@ -1,11 +1,10 @@
-//write a function to take the slider input and change the feedback delay feedback param
 let feedback = "0.5";
-window.addEventListener('load', () => {
+window.onload = (event) => {
   const slider = document.querySelector('input');
-  slider.addEventListener('input', (e) => {
-    feedback = e.target.value;
-  });
-});
+  slider.onchange = function() {
+    feedback = this.value;
+  }
+};
 let context;
 let joiny = 0;
 let player;
@@ -119,7 +118,6 @@ socket.on('bowParams', (params) => {
   bowDelay.feedback.value = feedback;
   bowPlayers[bowPlayerCount].playbackRate = params.rate;
   bowPlayers[bowPlayerCount].buffer = samples.get(params.sample);
-  
   bowPlayers[bowPlayerCount].start();
 });
 
