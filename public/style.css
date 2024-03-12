@@ -1,83 +1,192 @@
 body {
-    background-color:black;
-    color:whitesmoke; 
-    margin:0;
-    padding:0;
-    }
-
-  .main {
-      margin:auto;
-      padding:5px;
-      width:400px;
-  }
-
-  p{
-    margin:0;
-    padding:0;
-    font-family:times;
-  }
-  input[type="range"] {
-    -webkit-appearance: none;
-    appearance: none;
-    background: transparent;
-    cursor: pointer;
-    width: 15rem;
-  }
-  input[type="range"]::-webkit-slider-runnable-track {
-    background: whitesmoke;
-    height: 1rem;
-    border-radius: 15px;
-  }
+  background-color:lightgrey;
+  color:black; 
+  margin:0;
+  padding:0;
+  font-family: 'Courier New', Courier, monospace;
+}
+    
+#rooms {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width:100vw;
+  height:100vh;
+  background-color:lightgrey;
   
-  /******** Firefox ********/
-  input[type="range"]::-moz-range-track {
-    background: whitesmoke;
-    height: 1rem;
-    border-radius: 5px;
-  }
-  /***** Thumb Styles *****/
-/***** Chrome, Safari, Opera, and Edge Chromium *****/
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none; /* Override default look */
-  appearance: none;
-  margin-top: -0px; /* Centers thumb on the track */
-  background-color: white;
-  border-radius: 10px;
-  border-style:solid;
-  height: 1rem;
-  width: 1rem;    
 }
 
-  img {
-    width:400px;
-  }
-  .buttonText {
-    font-size: 15px;
-    cursor:pointer;
-    font-style:oblique;
-    text-decoration:wavy;
-    border-style:solid;
-    width:50px;
-    text-align: center;
-    border-width:1px;
-    border-radius:25px;
-  }
 
-  .user-state {
-    color:deepskyblue;
-  }
 
-  h1 {
-    font-family: helvetica;
-    
-    font-weight: lighter  ;
-    margin-top:5px;
-    padding:0;
-    margin:0;
-    margin-bottom:5px;
-    font-size: 25px;
-  }
-  h2 {
-    
-    font-size: 15px;
-  }
+.join {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width:80%;
+  height:400px;
+  position:absolute;
+  border-style:solid;
+  border-radius:25px;
+  border-width: 1px;
+  
+}
+
+#main {
+  display:none;
+  width:0;
+  height:0;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#player {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-style:solid;
+  border-radius:25px;
+  width:400px;
+}
+
+#text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+h1 {
+  font-family:times;
+  transform: scale(2.5, 1.2);
+  text-shadow: 2px 2px 8px black;
+  margin-top:0;
+  margin-bottom:15px;
+  font-size: 13px;
+}
+
+p{
+  margin:18px;  
+  margin-top:0px;
+  margin-bottom:0px;
+  text-align: center;
+  font-family:times;
+}
+
+img {
+  filter: grayscale(1);
+  border-radius:15px;
+  width:90%;
+}
+
+.buttonText {
+  font-size: 15px;
+  cursor:pointer;
+  font-style:oblique;
+  border-style:solid;
+  width:65px;
+  text-align: center;
+  border-width:1px;
+  border-radius:25px;
+  color:black;
+  -webkit-transition: color 0.5s;
+  -moz-transition: color 0.5s;
+  -o-transition: color 0.5s;
+  transition: color 0.5s;
+  
+}
+
+.buttonText:hover {
+  background-color:lightgrey;
+  color:blue;
+  
+}
+
+input[type="text"] {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  border-radius: 25px;
+  border-style:solid;
+  border-width:1px;
+  text-align: center;
+  margin-top:10px;
+  margin-bottom:10px;
+  border-color:black;
+  width:90%;
+}
+
+.roomText {
+  text-align: center;
+  padding-top:5px; 
+  margin-top:5px;
+  font-size: 15px;
+  cursor:pointer;
+  font-style:oblique;
+  border-style:solid;
+  height:50px;
+  border-width:1px;
+  border-radius:25px;
+  color:black;
+  -webkit-transition: color 0.5s;
+  -moz-transition: color 0.5s;
+  -o-transition: color 0.5s;
+  transition: color 0.5s;
+}
+
+.roomText:hover {
+  background-color:lightgrey;
+  color:blue;
+}
+
+.user-state {
+  color:blue;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  width: 15rem;
+}
+
+details {
+  margin-top:10px;
+  margin-bottom:10px;
+  border-radius:25px;
+  border-style:solid;
+  padding:10px;
+  width:90%;
+  background-color:lightgrey;
+  transition: .5s;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  background: whitesmoke;
+  height: 1rem;
+  border-radius: 15px;
+}
+
+/******** Firefox ********/
+input[type="range"]::-moz-range-track {
+  background: whitesmoke;
+  height: 1rem;
+  border-radius: 5px;
+}
+/***** Thumb Styles *****/
+/***** Chrome, Safari, Opera, and Edge Chromium *****/
+input[type="range"]::-webkit-slider-thumb {
+-webkit-appearance: none; /* Override default look */
+appearance: none;
+margin-top: -0px; /* Centers thumb on the track */
+background-color: lightgrey;
+border-radius: 10px;
+border-style:solid;
+height: 1rem;
+width: 1rem;    
+}
+

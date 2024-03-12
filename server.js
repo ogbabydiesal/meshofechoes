@@ -24,9 +24,9 @@ function getRandomInt(max) {
 }
 
 socket.on('connection', (socket) => {
-  users +=1;
-  participant.push(socket.id);
-  console.log(participant);
+  //users +=1;
+  //participant.push(socket.id);
+  //console.log(participant);
   socket.emit('connecty', 'a new user joined');
   socket.emit('numUsers', users);
   console.log('Client connected');
@@ -40,6 +40,21 @@ socket.on('connection', (socket) => {
     const index = participant.indexOf(socket.id);
     participant.splice(index, 1);
   });
+  socket.on('createRoom', (room) => {
+    socket.join(room);
+    if (!participant[room] ) {
+      participant[room] = [];
+      console.log('created room: ' + room);
+    }
+    participant[room].push(socket.id);
+    console.log(socket.rooms);
+    console.log(participant[room])
+  });
+  
+  socket.on('joinRoom', (room) => {
+    socket.join(room);
+    participant[room].push(socket.id);
+  });
 });
 
 function timeKeeper() {
@@ -51,68 +66,80 @@ function timeKeeper() {
     }
     //intro plucks
     if (time > 1 && time < 22 && ticks % 2 == 0) {
-      let part = getRandomInt(participant.length);
       let params = { 
         rate: 1,
         delayTime: +((Math.random() * 0.3) + 0.1).toFixed(2),
         mix: +Math.random().toFixed(2),
         sample : getRandomInt(15)
       };
-      socket.to(participant[part]).emit('pluckParams', params);
+      for (room in participant) { 
+        let part = getRandomInt(participant[room].length);
+        socket.to(participant[room][part]).emit('pluckParams', params);
+      }
     }
     //plucks get more sparce
     if (time > 22 && time < 32 && ticks % 4 == 0 && Math.random() > 0.5) {
-      let part = getRandomInt(participant.length);
       let params = { 
         rate: 1,
         delayTime: (Math.random() * 0.2) + .01,
         mix: Math.random(),
         sample : getRandomInt(15)
       };
-      socket.to(participant[part]).emit('pluckParams', params);
+      for (room in participant) { 
+        let part = getRandomInt(participant[room].length);
+        socket.to(participant[room][part]).emit('pluckParams', params);
+      }
     }
     //bows overlap with plucks
     if (time > 10 && time < 45 && ticks % 28 == 0) {
-      let part = getRandomInt(participant.length);
       let params = { 
         rate: 1,
         delayTime: (Math.random() * 0.2) + .1,
         mix: Math.random(),
         sample : getRandomInt(28) + 15
       };
-      socket.to(participant[part]).emit('bowParams', params);
+      for (room in participant) { 
+        let part = getRandomInt(participant[room].length);
+        socket.to(participant[room][part]).emit('bowParams', params);
+      }
     }
     //plucks return and change pitch
     if (time > 45 && time < 85 && ticks % 4 == 0 && Math.random() > 0.2) {
-      let part = getRandomInt(participant.length);
       let params = { 
         rate: 1 + (Math.random() * 0.4) - 0.2,
         delayTime: (Math.random() * 0.2) + .1,
         mix: Math.random(),
         sample : getRandomInt(15)
       };
-      socket.to(participant[part]).emit('pluckParams', params);
+      for (room in participant) { 
+        let part = getRandomInt(participant[room].length);
+        socket.to(participant[room][part]).emit('pluckParams', params);
+      }
     }
     //bows overlap with other bows but change pitch more
     if (time > 40 && time < 85 && ticks % 28 == 0) {
-      let part = getRandomInt(participant.length);
       let params = { 
         rate: 0.9 + (Math.random() * 0.5),
         delayTime: (Math.random() * 0.2) + .1,
         mix: Math.random(),
         sample : getRandomInt(28) + 15
       }; 
-      socket.to(participant[part]).emit('bowParams', params);
+      for (room in participant) { 
+        let part = getRandomInt(participant[room].length);
+        socket.to(participant[room][part]).emit('bowParams', params);
+      }
     }
     if (time > 40 && time < 80 && ticks % 28 == 0) {
-      let part = getRandomInt(participant.length);
       let params = { 
         rate: 0.9 + (Math.random() * 0.5),
         delayTime: (Math.random() * 0.2) + .1,
         mix: Math.random(),
         sample : getRandomInt(28) + 15
       }; 
-      socket.to(participant[part]).emit('bowParams', params);
+      for (room in participant) { 
+        let part = getRandomInt(participant[room].length);
+        socket.to(participant[room][part]).emit('bowParams', params);
+      }
     }
     //more plucks during the end part
     if (time > 80 && time < 108 && ticks % 2 == 0 && Math.random() > 0.1) {
@@ -133,9 +160,12 @@ function timeKeeper() {
         mix: Math.random(),
         sample : 45
       };
-      for (let i = 0; i < participant.length; i++) {
-        socket.to(participant[i]).emit('bowParams', params);
-      }      
+      //
+      for (room in participant) { 
+        for (let i = 0; i < participant[room].length; i++) {
+          socket.to(participant[room][i]).emit('bowParams', params);
+        }
+      } 
     }
     if (time == 120) {
       time = 0;

@@ -1,11 +1,13 @@
 let feedback = "0.5";
 window.onload = (event) => {
-  const slider = document.querySelector('input');
+  const slider = document.querySelector('.echo');
   slider.onchange = function() {
-    feedback = this.value;
+    try {
+      feedback = slider.value;
+    }
+    catch (error) {}
   }
 };
-let context;
 let joiny = 0;
 let player;
 let synth;
@@ -91,34 +93,60 @@ const samples = new Tone.ToneAudioBuffers({
   for (let x = 0; x < 8; x++) {
     bowPlayers.push(new Tone.Player().connect(bowDelay));
   }
-  document.querySelector(".button").innerHTML = "play";
+  document.querySelector(".buttonText").innerHTML = "listen";
 });
+//create room or join if exists
+function createRoom() {
+  let roomName = document.querySelector('.room').value;
+  socket.emit('createRoom', roomName);
+  let roomDiv = document.querySelector('#rooms');
+  roomDiv.style.display = "none";
+  let mainDiv = document.querySelector('#main');
+  mainDiv.style.width = "100vw";
+  mainDiv.style.height = "100vh";
+  let playerDiv = document.querySelector('#player');
+  playerDiv.style.display = "flex";
+}
+//join existing room
+function joinRoom() {
+  let roomName = document.getquerySelector('.room').value;
+  socket.emit('joinRoom', roomName);
+  let mainDiv = Document.querySelector('#main');
+  mainDiv.width = "100vw";
+  mainDiv.heigh = "100vh";
+  let playerDiv = Document.querySelector('#player');
+  playerDiv.display = "flex";
+}
 
 //pluck parameters from server
 socket.on('pluckParams', (params) => {
-  harmPlayerCount++;
-  if (harmPlayerCount >= harmPlayers.length) {
-    harmPlayerCount = 0;
-  }
-  delays[harmPlayerCount].feedback.value = feedback;
-  delays[harmPlayerCount].delayTime.value = params.delayTime;
-  harmPlayers[harmPlayerCount].playbackRate = params.rate;
-  reverbs[harmPlayerCount].wet.value = params.mix;
-  harmPlayers[harmPlayerCount].buffer = samples.get(params.sample);
-  harmPlayers[harmPlayerCount].volume.value = -2;
-  harmPlayers[harmPlayerCount].start();
+  if (isPlaying) {
+    harmPlayerCount++;
+    if (harmPlayerCount >= harmPlayers.length) {
+      harmPlayerCount = 0;
+    }
+    delays[harmPlayerCount].feedback.value = feedback;
+    delays[harmPlayerCount].delayTime.value = params.delayTime;
+    harmPlayers[harmPlayerCount].playbackRate = params.rate;
+    reverbs[harmPlayerCount].wet.value = params.mix;
+    harmPlayers[harmPlayerCount].buffer = samples.get(params.sample);
+    harmPlayers[harmPlayerCount].volume.value = -2;
+    harmPlayers[harmPlayerCount].start();
+  } 
 });
 
 //bow parameters from server
 socket.on('bowParams', (params) => {
-  bowPlayerCount++;
-  if (bowPlayerCount >= bowPlayers.length) {
-    bowPlayerCount = 0;
+  if (isPlaying) {
+    bowPlayerCount++;
+    if (bowPlayerCount >= bowPlayers.length) {
+      bowPlayerCount = 0;
+    }
+    bowDelay.feedback.value = feedback;
+    bowPlayers[bowPlayerCount].playbackRate = params.rate;
+    bowPlayers[bowPlayerCount].buffer = samples.get(params.sample);
+    bowPlayers[bowPlayerCount].start();
   }
-  bowDelay.feedback.value = feedback;
-  bowPlayers[bowPlayerCount].playbackRate = params.rate;
-  bowPlayers[bowPlayerCount].buffer = samples.get(params.sample);
-  bowPlayers[bowPlayerCount].start();
 });
 
 socket.on('disconnected', (lefty) => {
@@ -128,10 +156,11 @@ socket.on('disconnected', (lefty) => {
 
 socket.on('numUsers', (joiny) => {
   el = document.querySelector('.user-state');
+
   if (joiny > 1) {
     el.innerHTML = 'there are ' + joiny + ' users online';
   } else {
-    el.innerHTML = 'you are the only person here, send someone the link to join the party...';
+    el.innerHTML = 'you are the only person here, send someone the link to join the network...';
   }  
 });
 
