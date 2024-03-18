@@ -7,6 +7,8 @@ let ticks = 0;
 let time = 0;
 let users = 0;
 let participant = [];
+let active = false;
+
 
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, '/index.html'));
@@ -38,10 +40,23 @@ function alertRemoveClient() {
   
 }
 
+
+
 socket.on('connection', (socket) => {
   alertNewClient();
   participant.push(socket.id);
   console.log(participant);
+  socket.on('startTimer', (msg) => {
+    if (!active) {
+      active = true;
+    }
+    else {
+      active = false;
+      ticks = 0;
+      time = 0;
+      socket.emit('time', time);
+    }
+  });
   socket.on('disconnect', () => {
     const index = participant.indexOf(socket.id);
     participant.splice(index, 1);
@@ -52,10 +67,13 @@ socket.on('connection', (socket) => {
 
 function timeKeeper() {
   setTimeout(() => {
-    ticks +=1;
-    socket.emit('time', time);
-    if (ticks % 16 == 0) {
-      time += 1;
+    if (active) {
+      ticks +=1;
+      
+      socket.emit('time', time);
+      if (ticks % 16 == 0) {
+        time += 1;
+      }
     }
     //intro plucks
     if (time > 1 && time < 22 && ticks % 2 == 0) {

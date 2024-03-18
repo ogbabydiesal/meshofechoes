@@ -113,6 +113,13 @@ socket.on('pluckParams', (params) => {
   } 
 });
 
+//do something when the f key is pressed
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'f') {
+    socket.emit('startTimer', 'bang');
+  }
+});
+
 //bow parameters from server
 socket.on('bowParams', (params) => {
   if (isPlaying) {
