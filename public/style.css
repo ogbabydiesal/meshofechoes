@@ -46,6 +46,7 @@ body {
   justify-content: center;
   border-style:solid;
   border-radius:25px;
+  border-width: 1px;
   width:400px;
 }
 
@@ -128,6 +129,7 @@ input[type="text"] {
   cursor:pointer;
   font-style:oblique;
   border-style:solid;
+  border-width: 1px;
   height:50px;
   border-width:1px;
   border-radius:25px;
@@ -160,6 +162,7 @@ details {
   margin-bottom:10px;
   border-radius:25px;
   border-style:solid;
+  border-width:1px;
   padding:10px;
   width:90%;
   background-color:lightgrey;

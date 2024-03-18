@@ -23,36 +23,30 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-socket.on('connection', (socket) => {
+function alertNewClient() {
   users +=1;
-  participant.push(socket.id);
-  console.log(participant);
   socket.emit('connecty', 'a new user joined');
   socket.emit('numUsers', users);
   console.log('Client connected');
-  socket.on("isPlaying", (isPlaying) => {
-    active = isPlaying;
-  });
+}
+
+function alertRemoveClient() {
+  users -=1;
+  socket.emit('disconnected', 'a user left');
+  console.log('Client disconnected');
+  socket.emit('numUsers', users);
+  
+}
+
+socket.on('connection', (socket) => {
+  alertNewClient();
+  participant.push(socket.id);
+  console.log(participant);
   socket.on('disconnect', () => {
-    users -=1;
-    socket.emit('disconnected', 'a user left');
-    socket.emit('numUsers', users)
     const index = participant.indexOf(socket.id);
     participant.splice(index, 1);
-  });
-  socket.on('createRoom', (room) => {
-    socket.join(room);
-    if (!participant[room] ) {
-      participant[room] = [];
-      console.log('created room: ' + room);
-    }
-    participant[room].push(socket.id);
-    console.log(socket.rooms);
-    console.log(participant[room])
-  });
-  socket.on('joinRoom', (room) => {
-    socket.join(room);
-    participant[room].push(socket.id);
+    console.log(participant);
+    alertRemoveClient();
   });
 });
 

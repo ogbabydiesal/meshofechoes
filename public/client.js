@@ -95,28 +95,6 @@ const samples = new Tone.ToneAudioBuffers({
   }
   document.querySelector(".buttonText").innerHTML = "listen";
 });
-//create room or join if exists
-function createRoom() {
-  let roomName = document.querySelector('.room').value;
-  socket.emit('createRoom', roomName);
-  let roomDiv = document.querySelector('#rooms');
-  roomDiv.style.display = "none";
-  let mainDiv = document.querySelector('#main');
-  mainDiv.style.width = "100vw";
-  mainDiv.style.height = "100vh";
-  let playerDiv = document.querySelector('#player');
-  playerDiv.style.display = "flex";
-}
-//join existing room
-function joinRoom() {
-  let roomName = document.getquerySelector('.room').value;
-  socket.emit('joinRoom', roomName);
-  let mainDiv = Document.querySelector('#main');
-  mainDiv.width = "100vw";
-  mainDiv.heigh = "100vh";
-  let playerDiv = Document.querySelector('#player');
-  playerDiv.display = "flex";
-}
 
 //pluck parameters from server
 socket.on('pluckParams', (params) => {
@@ -151,18 +129,22 @@ socket.on('bowParams', (params) => {
 
 socket.on('disconnected', (lefty) => {
   el = document.querySelector('.user-state');
+  console.log(el);
   el.innerHTML = lefty;
 });
 
+
 socket.on('numUsers', (joiny) => {
+  console.log('hello');
   el = document.querySelector('.user-state');
-  console.log(joiny);
+  console.log(el);
   if (joiny > 1) {
     el.innerHTML = 'there are ' + joiny + ' users online';
   } else {
     el.innerHTML = 'you are the only person here, send someone the link to join the network...';
   }  
 });
+
 
 socket.on('time', (time) => {
   timey = document.getElementById('time-point');
