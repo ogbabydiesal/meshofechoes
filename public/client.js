@@ -156,7 +156,7 @@ socket.on('disconnected', (lefty) => {
 
 socket.on('numUsers', (joiny) => {
   el = document.querySelector('.user-state');
-
+  console.log(joiny);
   if (joiny > 1) {
     el.innerHTML = 'there are ' + joiny + ' users online';
   } else {
@@ -166,7 +166,7 @@ socket.on('numUsers', (joiny) => {
 
 socket.on('time', (time) => {
   timey = document.getElementById('time-point');
-  timey.innerHTML = 'cloud sync ' + time + ' / 120'; 
+  timey.innerHTML = 'cloud sync ' + time + ' / 240'; 
 });
 
 function start(){

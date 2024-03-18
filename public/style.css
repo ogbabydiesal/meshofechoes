@@ -14,10 +14,7 @@ body {
   width:100vw;
   height:100vh;
   background-color:lightgrey;
-  
 }
-
-
 
 .join {
   display: flex;
@@ -34,8 +31,8 @@ body {
 
 #main {
   display:none;
-  width:0;
-  height:0;
+  width:100vw;
+  height:100vh;
   display:flex;
   flex-direction: column;
   align-items: center;
@@ -43,7 +40,7 @@ body {
 }
 
 #player {
-  display: none;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -82,6 +79,11 @@ img {
   width:90%;
 }
 
+.donna {
+  align-items:center;
+  width:100%;
+}
+
 .buttonText {
   font-size: 15px;
   cursor:pointer;
@@ -96,13 +98,11 @@ img {
   -moz-transition: color 0.5s;
   -o-transition: color 0.5s;
   transition: color 0.5s;
-  
 }
 
 .buttonText:hover {
   background-color:lightgrey;
   color:blue;
-  
 }
 
 input[type="text"] {
