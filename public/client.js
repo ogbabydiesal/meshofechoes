@@ -124,7 +124,7 @@ document.addEventListener('keydown', (event) => {
 socket.on('bowParams', (params) => {
   if (isPlaying) {
     bowPlayerCount++;
-    if (bowPlayerCount >= bowPlayers.length) {
+    if (bowPlayerCount >= bowPlayers.length - 1) {
       bowPlayerCount = 0;
     }
     bowDelay.feedback.value = feedback;
@@ -134,17 +134,23 @@ socket.on('bowParams', (params) => {
   }
 });
 
+socket.on('finalParams', (params) => {
+  if (isPlaying) {
+    bowDelay.feedback.value = feedback;
+    bowPlayers[bowPlayers.length - 1].playbackRate = params.rate;
+    bowPlayers[bowPlayers.length - 1].buffer = samples.get(params.sample);
+    bowPlayers[bowPlayers.length - 1].start();
+  }
+});
+
 socket.on('disconnected', (lefty) => {
   el = document.querySelector('.user-state');
-  console.log(el);
   el.innerHTML = lefty;
 });
 
 
 socket.on('numUsers', (joiny) => {
-  console.log('hello');
   el = document.querySelector('.user-state');
-  console.log(el);
   if (joiny > 1) {
     el.innerHTML = 'there are ' + joiny + ' users online';
   } else {
