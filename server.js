@@ -6,9 +6,23 @@ const port = process.env.PORT || 3000;
 let ticks = 0;
 let time = 0;
 let users = 0;
-let participant = [];
-let active = false;
+//let participant = [];
+let active = true;
 
+let rooms = {};
+
+//sample room object
+/*
+rooms = {
+  roomName1: {
+    participants: [socketid1, socketid2],
+
+  },
+  roomName2: {
+    participants: [socketid3, socketid4],
+  }
+}
+*/
 
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, '/index.html'));
@@ -41,9 +55,9 @@ function alertRemoveClient() {
 }
 
 socket.on('connection', (socket) => {
-  alertNewClient();
-  participant.push(socket.id);
-  console.log(participant);
+  // alertNewClient();
+  // participant.push(socket.id);
+  // console.log(participant);
   socket.on('startTimer', (msg) => {
     if (!active) {
       active = true;
@@ -56,12 +70,49 @@ socket.on('connection', (socket) => {
     }
   });
   socket.on('disconnect', () => {
-    const index = participant.indexOf(socket.id);
-    participant.splice(index, 1);
-    console.log(participant);
-    alertRemoveClient();
+    console.log('Client disconnected');
+    //check if socket.id is in a room and remove it
+    Object.keys(rooms).forEach(roomName => {
+      let index = rooms[roomName].participants.indexOf(socket.id);
+      if (index !== -1) {
+        rooms[roomName].participants.splice(index, 1);
+        //if room is empty, delete it
+        if (rooms[roomName].participants.length === 0) {
+          delete rooms[roomName];
+        }
+      }
+    });
+    //alertRemoveClient();
   });
+
+  socket.on('joinRoom', (roomName) => {
+    socket.join(roomName);
+    if (!rooms[roomName]) {
+      rooms[roomName] = {
+        participants: []
+      };
+    }
+    rooms[roomName].participants.push(socket.id) ? rooms[roomName].participants.indexOf(socket.id) === -1 : console.log('already in room');
+    console.log('rooms: ', rooms);
+  });
+
+  socket.on('leaveRoom', (roomName) => {
+    socket.leave(roomName);
+    if (rooms[roomName]) {
+      let index = rooms[roomName].participants.indexOf(socket.id);
+      if (index !== -1) {
+        rooms[roomName].participants.splice(index, 1);
+        //if room is empty, delete it
+        if (rooms[roomName].participants.length === 0) {
+          delete rooms[roomName];
+        }
+      }
+    }
+    console.log('rooms: ', rooms);
+  });
+
 });
+
 
 function timeKeeper() {
   setTimeout(() => {
@@ -80,8 +131,12 @@ function timeKeeper() {
         mix: +Math.random().toFixed(2),
         sample : getRandomInt(15)
       };
-      let part = getRandomInt(participant.length);
-      socket.to(participant[part]).emit('pluckParams', params);
+      //do instruction once per room
+      Object.keys(rooms).forEach(roomName => {
+        let participant = rooms[roomName].participants;
+        let part = getRandomInt(participant.length);
+        socket.to(participant[part]).emit('pluckParams', params);
+      });
     }
     //plucks get more sparce
     if (time > 22 && time < 38 && ticks % 4 == 0 && Math.random() > 0.5) {
@@ -91,10 +146,13 @@ function timeKeeper() {
         mix: Math.random(),
         sample : getRandomInt(15)
       };
-      for (let i = 0; i < 4; i++) {
-        let part = getRandomInt(participant.length);
-        socket.to(participant[part]).emit('pluckParams', params);
-      }
+      Object.keys(rooms).forEach(roomName => {
+        let participant = rooms[roomName].participants;
+        for (let i = 0; i < 4; i++) {
+          let part = getRandomInt(participant.length);
+          socket.to(participant[part]).emit('pluckParams', params);
+        }
+      });
     }
     //sparce plucks overlap with bows
     if (time > 38 && time < 165 && ticks % 4 == 0 && Math.random() > 0.5) {
@@ -104,10 +162,13 @@ function timeKeeper() {
         mix: Math.random(),
         sample : getRandomInt(15)
       };
-      for (let i = 0; i < 4; i++) {
-        let part = getRandomInt(participant.length);
-        socket.to(participant[part]).emit('pluckParams', params);
-      }
+      Object.keys(rooms).forEach(roomName => {
+        let participant = rooms[roomName].participants;
+        for (let i = 0; i < 4; i++) {
+          let part = getRandomInt(participant.length);
+          socket.to(participant[part]).emit('pluckParams', params);
+        }
+      });
     }
     //bows overlap with plucks
     if (time > 35 && time < 165 && ticks % 28 == 0) {
@@ -117,10 +178,13 @@ function timeKeeper() {
         mix: Math.random(),
         sample : getRandomInt(28) + 15
       };
-      for (let i = 0; i < 4; i++) {
-        let part = getRandomInt(participant.length);
-        socket.to(participant[part]).emit('bowParams', params);
-      }
+      Object.keys(rooms).forEach(roomName => {
+        let participant = rooms[roomName].participants;
+        for (let i = 0; i < 4; i++) {
+          let part = getRandomInt(participant.length);
+          socket.to(participant[part]).emit('bowParams', params);
+        }
+      });
     }
     //plucks return and change pitch
     if (time > 165 && time < 205 && ticks % 4 == 0 && Math.random() > 0.2) {
@@ -130,10 +194,13 @@ function timeKeeper() {
         mix: Math.random(),
         sample : getRandomInt(15)
       };
-      for (let i = 0; i < 4; i++) {
-        let part = getRandomInt(participant.length);
-        socket.to(participant[part]).emit('pluckParams', params);
-      }
+      Object.keys(rooms).forEach(roomName => {
+        let participant = rooms[roomName].participants;
+        for (let i = 0; i < 4; i++) {
+          let part = getRandomInt(participant.length);
+          socket.to(participant[part]).emit('pluckParams', params);
+        }
+      });
     }
     //bows overlap with other bows but change pitch more
     if (time > 160 && time < 205 && ticks % 28 == 0) {
@@ -143,24 +210,15 @@ function timeKeeper() {
         mix: Math.random(),
         sample : getRandomInt(28) + 15
       };
-      for (let i = 0; i < 4; i++) {
-        let part = getRandomInt(participant.length);
-        socket.to(participant[part]).emit('bowParams', params);
-      }
+      Object.keys(rooms).forEach(roomName => {
+        let participant = rooms[roomName].participants;
+        for (let i = 0; i < 4; i++) {
+          let part = getRandomInt(participant.length);
+          socket.to(participant[part]).emit('bowParams', params);
+        }
+      });
     }
-
-    if (time > 160 && time < 200 && ticks % 28 == 0) {
-      let params = { 
-        rate: 0.9 + (Math.random() * 0.5),
-        delayTime: (Math.random() * 0.2) + .1,
-        mix: Math.random(),
-        sample : getRandomInt(28) + 15
-      };
-      for (let i = 0; i < 4; i++) {
-        let part = getRandomInt(participant.length);
-        socket.to(participant[part]).emit('bowParams', params);
-      }
-    }
+    
     //more plucks during the end part
     if (time > 200 && time < 228 && ticks % 2 == 0 && Math.random() > 0.1) {
       let params = {
@@ -169,10 +227,13 @@ function timeKeeper() {
         mix: Math.random(),
         sample : getRandomInt(15)
       };
-      for (let i = 0; i < 4; i++) {
-        let part = getRandomInt(participant.length);
-        socket.to(participant[part]).emit('pluckParams', params);
-      }
+      Object.keys(rooms).forEach(roomName => {
+        let participant = rooms[roomName].participants;
+        for (let i = 0; i < 4; i++) {
+          let part = getRandomInt(participant.length);
+          socket.to(participant[part]).emit('pluckParams', params);
+        }
+      });
     }
 
     if (time == 201 && ticks % 16 == 0) {
@@ -183,10 +244,13 @@ function timeKeeper() {
         sample : 45
       };
       //bow at the end
-      for (let i = 0; i < 12; i++) {
-        let part = getRandomInt(participant.length);
-        socket.to(participant[part]).emit('finalParams', params);
-      }
+      Object.keys(rooms).forEach(roomName => {
+        let participant = rooms[roomName].participants;
+        for (let i = 0; i < 12; i++) {
+          let part = getRandomInt(participant.length);
+          socket.to(participant[part]).emit('finalParams', params);
+        }
+      });
       
     }
     if (time == 240) {

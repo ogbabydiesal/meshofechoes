@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="/style.css">
     <script src="/socket.io/socket.io.js"></script>
     <script src="Tone.js"></script>
-    <script src="client.js"></script>
+    
   </head>
   <body>
     <div id="main">
@@ -21,32 +21,40 @@
         <br>
         <div id="text">
           <h1>Tommy: Mesh of Echoes</h1>
-          <p>a generative sound piece for distributed, networked loudspeakers</p>
+          <p>a generative sound work for distributed, networked loudspeakers</p>
           <br> 
-          <p id="time-point">cloud sync 000 /240</p>
+          <p id="time-point"> ⟿ Sync 000 / 240</p>
           <br>
-          <p class = "buttonText" onclick="start()">loading</button></p>
+          <p class = "buttonText outlined" onclick="start()">loading</p>
           <br>
-          <p>echoes &#41;&#41;&#41;&#41;&#41;&#41;&#41;&#41;</p>
-          <input class = "echo" type="range" min="0.0" max="0.9" step=".01">
-          <br>
-          <br> 
+          <p>echoes ∿∿∿∿∿∿</p>
+          <div id ="echoValue">
+            <span><input class = "echo" type="range" min="0.0" max="0.9" step=".01"><span style="vertical-align: super;">☜</span></span>
+          </div>
           <p><span style="color:black">network state:</span> <span class="user-state">you are the only person here, send someone the link to join the network...</span></p>
+          <input type="text" id="inputRoom" placeholder="enter group name">
+          <button class="outlined" id="joinRoom" onclick="joinRoom()">submit</button>
+          <button class="outlined" id="leaveRoom" onclick="leaveRoom()">leave room</button>
           <br>
         </div>
         <details>
           <summary>more info</summary>
-          <p style="color:blue">instructions</p>
-          <p>1. in the same room, stand apart from each other.</p>
-          <p>2. press 'listen.'</p>
-          <p>3. use the echo slider to change the delay effect.</p>
+          <p style="font-style:italic">instructions</p>
+          <ol>
+            <li>in the same room, stand apart from each other.</li>
+            <li>press 'listen.'</li>
+            <li>use the echo slider to change the delay effect.</li>
+          </ol>
+          <div id="qrcode" style="max-width:150px; margin:auto;">
+            <img class="donna" src="images/qrcode.png">
+          </div>
           <br>
-          <p>2023</p>
+          <p>composition & code by Tommy Martinez</p>
           <p>photo by Donna Allen</p>
-          <br>
-          <img class="donna" src="images/qrcode.png">
+          <p>2023</p>
         </details> 
       </div> 
-    </div>       
+    </div> 
+    <script src="client.js"></script>      
   </body>
 </html>

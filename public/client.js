@@ -30,6 +30,27 @@ let bowDelay;
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
+
+function joinRoom() {
+  const roomName = document.getElementById('inputRoom').value;
+  if (roomName !== '') {
+    socket.emit('joinRoom', roomName);
+    console.log('joined room: ' + roomName);
+    document.querySelector('.user-state').innerHTML = 'joined room: ' + roomName;
+    document.getElementById('joinRoom').style.display = 'none';
+    document.getElementById('leaveRoom').style.display = 'block';
+  }
+}
+
+function leaveRoom() {
+  const roomName = document.getElementById('inputRoom').value;
+  if (roomName !== '') {
+    socket.emit('leaveRoom', roomName);
+    document.getElementById('joinRoom').style.display = 'block';
+    document.getElementById('leaveRoom').style.display = 'none';
+  }
+}
+
 //prevent reverb tail bug
 const silentPlayer = new Tone.Player("sounds/silence.m4a");
 const vol = new Tone.Volume(-70).toDestination();
@@ -161,7 +182,7 @@ socket.on('numUsers', (joiny) => {
 
 socket.on('time', (time) => {
   timey = document.getElementById('time-point');
-  timey.innerHTML = 'cloud sync ' + time + ' / 240'; 
+  timey.innerHTML = '⟿ Sync ' + time + ' / 240'; 
 });
 
 function start(){

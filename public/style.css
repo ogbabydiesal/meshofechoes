@@ -3,29 +3,6 @@ body {
   color:black; 
   margin:0;
   padding:0;
-  font-family: 'Courier New', Courier, monospace;
-}
-    
-#rooms {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width:100vw;
-  height:100vh;
-  background-color:lightgrey;
-}
-
-.join {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width:80%;
-  height:400px;
-  position:absolute;
-  border-style:solid;
-  border-radius:25px;
-  border-width: 1px;
 }
 
 #main {
@@ -47,6 +24,7 @@ body {
   border-radius:25px;
   border-width: 1px;
   width:400px;
+  box-shadow: 2px 4px 15px black;
 }
 
 #text {
@@ -65,7 +43,7 @@ h1 {
   font-size: 13px;
 }
 
-p{
+p {
   margin:18px;  
   margin-top:0px;
   margin-bottom:0px;
@@ -74,20 +52,51 @@ p{
 }
 
 img {
-  filter: grayscale(1);
+  filter: grayscale(0);
   border-radius:15px;
   width:90%;
+  border-style:solid;
+}
+
+#echoValue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+#qrcode {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top:10px;
+  margin-bottom:10px;
 }
 
 .donna {
-  align-items:center;
-  width:100%;
+  background-color: red;
 }
 
 .buttonText {
   font-size: 15px;
   cursor:pointer;
   font-style:oblique;
+  border-style:solid;
+  width:65px;
+  text-align: center;
+  border-width:1px;
+  border-radius:25px;
+  color:black;
+  -webkit-transition: color 0.5s;
+  -moz-transition: color 0.5s;
+  -o-transition: color 0.5s;
+  transition: color 0.5s;
+}
+
+.outlined {
+  cursor: pointer;
+  background-color: transparent;
   border-style:solid;
   width:65px;
   text-align: center;
@@ -114,10 +123,13 @@ input[type="text"] {
   border-style:solid;
   border-width:1px;
   text-align: center;
-  margin-top:10px;
-  margin-bottom:10px;
+  margin-top:24px;
+  
   border-color:black;
-  width:90%;
+  width:80%;
+  background-color: transparent;
+  /* no highlight on focus */
+  outline: none;
 }
 
 .roomText {
@@ -139,7 +151,7 @@ input[type="text"] {
   transition: color 0.5s;
 }
 
-.roomText:hover {
+.outlined:hover {
   background-color:lightgrey;
   color:blue;
 }
@@ -152,43 +164,74 @@ input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
   background: transparent;
+  background-color: transparent;
+  border: solid;
   cursor: pointer;
-  width: 15rem;
+  border-width:1px;
+  height: 30px;
+  border-radius: 25px;
+}
+
+input[type="range"]:focus {
+  outline: none;
+}
+
+/***** track style *****/
+input[type="range"]::-webkit-slider-runnable-track {
+  background: transparent;
+  height: 1rem;
+  border-radius: 15px;
+}
+/******** Firefox ********/
+input[type="range"]::-moz-range-track {
+  background: transparent;
+  height: 1rem;
+  border-radius: 15px;
 }
 
 details {
-  margin-top:10px;
   margin-bottom:10px;
-  border-radius:25px;
+  border-radius:15px;
   border-style:solid;
   border-width:1px;
   padding:10px;
   width:90%;
-  background-color:lightgrey;
+  background-color:transparent;
   transition: .5s;
 }
+
 input[type="range"]::-webkit-slider-runnable-track {
-  background: whitesmoke;
+  background: transparent;
   height: 1rem;
   border-radius: 15px;
 }
 
 /******** Firefox ********/
 input[type="range"]::-moz-range-track {
-  background: whitesmoke;
+  background: transparent;
   height: 1rem;
   border-radius: 5px;
 }
 /***** Thumb Styles *****/
 /***** Chrome, Safari, Opera, and Edge Chromium *****/
 input[type="range"]::-webkit-slider-thumb {
--webkit-appearance: none; /* Override default look */
-appearance: none;
-margin-top: -0px; /* Centers thumb on the track */
-background-color: lightgrey;
-border-radius: 10px;
-border-style:solid;
-height: 1rem;
-width: 1rem;    
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  margin-top: -0px; /* Centers thumb on the track */
+  background-color: lightgrey;
+  border-radius: 10px;
+  border-style:solid;
+  height: 1rem;
+  width: 1rem;
 }
 
+#joinRoom {
+  margin-top:8px;
+  display:block;
+  width:55px;
+}
+
+#leaveRoom {
+  display:none;
+  width:85px;
+}
